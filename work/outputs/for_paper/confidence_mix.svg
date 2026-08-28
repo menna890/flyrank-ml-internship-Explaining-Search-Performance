@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="480.0" y="34" text-anchor="middle" font-family="Arial" font-size="24" fill="#16232a">Refresh queue confidence</text>
+<text x="178" y="152.3" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">high</text>
+<rect x="190" y="70.0" width="207.8" height="126.7" fill="#6F4E7C" rx="4"/>
+<text x="405.8" y="152.3" font-family="Arial" font-size="13" fill="#27343b">1.68e+04</text>
+<text x="178" y="289.0" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">medium</text>
+<rect x="190" y="206.7" width="522.2" height="126.7" fill="#6F4E7C" rx="4"/>
+<text x="720.2" y="289.0" font-family="Arial" font-size="13" fill="#27343b">4.22e+04</text>
+<text x="178" y="425.7" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">low</text>
+<rect x="190" y="343.3" width="730.0" height="126.7" fill="#6F4E7C" rx="4"/>
+<text x="928.0" y="425.7" font-family="Arial" font-size="13" fill="#27343b">5.9e+04</text>
+</svg>

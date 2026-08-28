@@ -1,0 +1,29 @@
+{
+  "median_score": 2.0,
+  "metrics": {
+    "accuracy": 0.5133963350608001,
+    "average_precision": 0.3790275518231266,
+    "f1": 0.4537434883455645,
+    "precision": 0.3993507580067602,
+    "precision_at_10": 0.5,
+    "precision_at_100": 0.35,
+    "precision_at_20": 0.5,
+    "precision_at_50": 0.4,
+    "recall": 0.5252894308227318,
+    "roc_auc": 0.5006337615903003
+  },
+  "precision_at_50": 0.4,
+  "rows": 118092,
+  "score_distribution": {
+    "0": 13243,
+    "1": 45087,
+    "2": 26251,
+    "3": 31202,
+    "4": 2309
+  },
+  "thresholds": {
+    "age_median": 193.0,
+    "wc_median": 2468.0
+  },
+  "top_score": 4
+}

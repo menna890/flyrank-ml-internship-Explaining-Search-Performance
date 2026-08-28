@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="480.0" y="34" text-anchor="middle" font-family="Arial" font-size="24" fill="#16232a">Top refresh reason codes</text>
+<text x="178" y="93.1" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">never_optimized</text>
+<rect x="190" y="70.0" width="730.0" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="928.0" y="93.1" font-family="Arial" font-size="13" fill="#27343b">7.97e+04</text>
+<text x="178" y="138.7" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">ctr_review_candidate</text>
+<rect x="190" y="115.6" width="611.6" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="809.6" y="138.7" font-family="Arial" font-size="13" fill="#27343b">6.68e+04</text>
+<text x="178" y="184.2" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">thin</text>
+<rect x="190" y="161.1" width="540.4" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="738.4" y="184.2" font-family="Arial" font-size="13" fill="#27343b">5.9e+04</text>
+<text x="178" y="229.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">old</text>
+<rect x="190" y="206.7" width="535.0" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="733.0" y="229.8" font-family="Arial" font-size="13" fill="#27343b">5.84e+04</text>
+<text x="178" y="275.3" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">visible_model_opportunity</text>
+<rect x="190" y="252.2" width="256.9" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="454.9" y="275.3" font-family="Arial" font-size="13" fill="#27343b">2.81e+04</text>
+<text x="178" y="320.9" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">model_decline_risk</text>
+<rect x="190" y="297.8" width="214.3" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="412.3" y="320.9" font-family="Arial" font-size="13" fill="#27343b">2.34e+04</text>
+<text x="178" y="366.4" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">no_signal</text>
+<rect x="190" y="343.3" width="121.3" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="319.3" y="366.4" font-family="Arial" font-size="13" fill="#27343b">1.32e+04</text>
+<text x="178" y="412.0" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">engagement_review_candidate</text>
+<rect x="190" y="388.9" width="105.4" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="303.4" y="412.0" font-family="Arial" font-size="13" fill="#27343b">1.15e+04</text>
+<text x="178" y="457.6" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">no_keyword</text>
+<rect x="190" y="434.4" width="30.3" height="35.6" fill="#8C6BB1" rx="4"/>
+<text x="228.3" y="457.6" font-family="Arial" font-size="13" fill="#27343b">3.31e+03</text>
+</svg>

@@ -1,0 +1,34 @@
+{
+  "baseline": {
+    "accuracy": 0.5133963350608001,
+    "average_precision": 0.3790275518231266,
+    "f1": 0.4537434883455645,
+    "precision": 0.3993507580067602,
+    "precision_at_10": 0.5,
+    "precision_at_100": 0.35,
+    "precision_at_20": 0.5,
+    "precision_at_50": 0.4,
+    "recall": 0.5252894308227318,
+    "roc_auc": 0.5006337615903003,
+    "thresholds": {
+      "age_median": 193.0,
+      "wc_median": 2468.0
+    }
+  },
+  "best_model": "CatBoost",
+  "charts": [
+    "outputs\\charts\\action_mix.svg",
+    "outputs\\charts\\confidence_mix.svg",
+    "outputs\\charts\\top_reason_codes.svg",
+    "outputs\\charts\\top_feature_importance.svg",
+    "outputs\\charts\\model_comparison.svg"
+  ],
+  "final_score_p50": 38.807798912969616,
+  "final_score_p80": 59.81449374420181,
+  "high_confidence_rows": 16806,
+  "queue_output": "outputs\\refresh_queue.csv",
+  "report_output": "outputs\\model_report.md",
+  "rows_scored": 118092,
+  "target_positive_rate": 0.5779239348012583,
+  "top_queue_score": 90.98033229146311
+}

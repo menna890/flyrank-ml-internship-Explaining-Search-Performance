@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="480.0" y="34" text-anchor="middle" font-family="Arial" font-size="24" fill="#16232a">Suggested action mix</text>
+<text x="178" y="116.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">expand_and_refresh</text>
+<rect x="190" y="70.0" width="730.0" height="72.0" fill="#426B69" rx="4"/>
+<text x="928.0" y="116.8" font-family="Arial" font-size="13" fill="#27343b">5.9e+04</text>
+<text x="178" y="198.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">monitor</text>
+<rect x="190" y="152.0" width="336.4" height="72.0" fill="#426B69" rx="4"/>
+<text x="534.4" y="198.8" font-family="Arial" font-size="13" fill="#27343b">2.72e+04</text>
+<text x="178" y="280.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">refresh</text>
+<rect x="190" y="234.0" width="332.8" height="72.0" fill="#426B69" rx="4"/>
+<text x="530.8" y="280.8" font-family="Arial" font-size="13" fill="#27343b">2.69e+04</text>
+<text x="178" y="362.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">refresh_and_review_ctr</text>
+<rect x="190" y="316.0" width="61.6" height="72.0" fill="#426B69" rx="4"/>
+<text x="259.6" y="362.8" font-family="Arial" font-size="13" fill="#27343b">4.98e+03</text>
+<text x="178" y="444.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">refresh_and_review_engagement</text>
+<rect x="190" y="398.0" width="0.2" height="72.0" fill="#426B69" rx="4"/>
+<text x="198.2" y="444.8" font-family="Arial" font-size="13" fill="#27343b">19</text>
+</svg>

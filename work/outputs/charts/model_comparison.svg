@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="480.0" y="34" text-anchor="middle" font-family="Arial" font-size="24" fill="#16232a">Model comparison (P@50)</text>
+<text x="178" y="116.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">CatBoost</text>
+<rect x="190" y="70.0" width="598.6" height="72.0" fill="#B07AA1" rx="4"/>
+<text x="796.6" y="116.8" font-family="Arial" font-size="13" fill="#27343b">0.82</text>
+<text x="178" y="198.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">LightGBM</text>
+<rect x="190" y="152.0" width="598.6" height="72.0" fill="#B07AA1" rx="4"/>
+<text x="796.6" y="198.8" font-family="Arial" font-size="13" fill="#27343b">0.82</text>
+<text x="178" y="280.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">Logistic Regression</text>
+<rect x="190" y="234.0" width="540.2" height="72.0" fill="#B07AA1" rx="4"/>
+<text x="738.2" y="280.8" font-family="Arial" font-size="13" fill="#27343b">0.74</text>
+<text x="178" y="362.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">Random Forest</text>
+<rect x="190" y="316.0" width="525.6" height="72.0" fill="#B07AA1" rx="4"/>
+<text x="723.6" y="362.8" font-family="Arial" font-size="13" fill="#27343b">0.72</text>
+<text x="178" y="444.8" text-anchor="end" font-family="Arial" font-size="13" fill="#27343b">XGBoost</text>
+<rect x="190" y="398.0" width="627.8" height="72.0" fill="#B07AA1" rx="4"/>
+<text x="825.8" y="444.8" font-family="Arial" font-size="13" fill="#27343b">0.86</text>
+</svg>

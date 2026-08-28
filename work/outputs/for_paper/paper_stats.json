@@ -1,0 +1,14 @@
+{
+  "n_pages_scored": 118092,
+  "n_high_confidence": 16806,
+  "n_medium_confidence": 42240,
+  "n_low_confidence": 59046,
+  "best_model": "CatBoost",
+  "best_model_p50": 0.82,
+  "best_model_auc": 0.8504517101049635,
+  "top_feature_1": "search_volume_vs_bucket_mean",
+  "top_feature_1_importance": 16.486834371765926,
+  "action_refresh": 26900,
+  "action_monitor": 27191,
+  "action_expand": 59000
+}

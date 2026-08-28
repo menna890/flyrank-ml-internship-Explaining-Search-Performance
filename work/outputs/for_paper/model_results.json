@@ -1,0 +1,224 @@
+{
+  "best_model": {
+    "metrics": {
+      "accuracy": 0.7598469821479172,
+      "average_precision": 0.6657739750074319,
+      "best_threshold": 0.4249999999999998,
+      "f1": 0.7045494160711173,
+      "precision": 0.5779239348012583,
+      "precision_at_10": 0.8,
+      "precision_at_100": 0.85,
+      "precision_at_20": 0.8,
+      "precision_at_50": 0.82,
+      "recall": 0.9022321428571428,
+      "roc_auc": 0.8504517101049635
+    },
+    "name": "CatBoost",
+    "selection_metric": "roc_auc",
+    "top_features": [
+      {
+        "feature": "search_volume_vs_bucket_mean",
+        "importance": 16.486834371765926
+      },
+      {
+        "feature": "content_age_days_vs_bucket_median",
+        "importance": 15.080703245279608
+      },
+      {
+        "feature": "word_count_vs_bucket_median",
+        "importance": 12.741436702237044
+      },
+      {
+        "feature": "search_volume_vs_bucket_median",
+        "importance": 5.84405866527641
+      },
+      {
+        "feature": "days_since_update_vs_bucket_mean",
+        "importance": 5.60368816478222
+      },
+      {
+        "feature": "log_age",
+        "importance": 5.51571572357276
+      },
+      {
+        "feature": "age_squared",
+        "importance": 4.9013708479945945
+      },
+      {
+        "feature": "content_age_days",
+        "importance": 4.414784578547373
+      },
+      {
+        "feature": "data_completeness",
+        "importance": 3.0282977662864217
+      },
+      {
+        "feature": "content_age_days_vs_bucket_mean",
+        "importance": 2.629105769635167
+      },
+      {
+        "feature": "word_count",
+        "importance": 2.490054997786488
+      },
+      {
+        "feature": "search_volume",
+        "importance": 2.341347165493659
+      },
+      {
+        "feature": "content_depth",
+        "importance": 2.312789644874847
+      },
+      {
+        "feature": "freshness_x_demand",
+        "importance": 2.048775368336678
+      },
+      {
+        "feature": "cat_words_ratio",
+        "importance": 1.7996183553563128
+      }
+    ]
+  },
+  "ensemble_enabled": true,
+  "feature_count": 69,
+  "feature_names": [
+    "days_with_data",
+    "word_count",
+    "backlinks",
+    "category_count",
+    "search_volume",
+    "competition",
+    "cpc",
+    "content_age_days",
+    "days_since_optimized",
+    "ever_optimized",
+    "has_keyword_data",
+    "has_word_count",
+    "has_search_volume",
+    "has_backlinks",
+    "has_category_count",
+    "has_competition",
+    "has_cpc",
+    "content_depth",
+    "market_difficulty",
+    "wasted_age",
+    "keyword_opportunity",
+    "commercial_value",
+    "depth_vs_demand",
+    "optimization_recency",
+    "breadth_vs_depth",
+    "structured_content",
+    "age_squared",
+    "log_age",
+    "is_old",
+    "is_new",
+    "is_high_visibility",
+    "data_completeness",
+    "cat_words_ratio",
+    "intent_backlinks_ratio",
+    "diff_from_cat_avg_words",
+    "diff_from_intent_avg_backlinks",
+    "unoptimized_ratio",
+    "backlinks_per_age",
+    "words_per_age_day",
+    "commercial_potential",
+    "word_count_vs_bucket_median",
+    "word_count_vs_bucket_mean",
+    "backlinks_vs_bucket_median",
+    "backlinks_vs_bucket_mean",
+    "content_age_days_vs_bucket_median",
+    "content_age_days_vs_bucket_mean",
+    "days_since_update_vs_bucket_median",
+    "days_since_update_vs_bucket_mean",
+    "search_volume_vs_bucket_median",
+    "search_volume_vs_bucket_mean",
+    "cpc_vs_bucket_median",
+    "cpc_vs_bucket_mean",
+    "freshness_x_demand",
+    "depth_vs_competition",
+    "age_x_optimization",
+    "maturity_x_freshness",
+    "opportunity_x_value",
+    "content_type_feedly article",
+    "content_type_keyword article",
+    "main_intent_informational",
+    "main_intent_navigational",
+    "main_intent_transactional",
+    "main_intent_unknown",
+    "provider_used_gemini-generate-content",
+    "provider_used_google",
+    "provider_used_openai",
+    "provider_used_poshe---openai",
+    "provider_used_unknown",
+    "provider_used_vexxskincare---openai"
+  ],
+  "full_data_predictions": "D:\\FCI\\03-Project\\07-Data Science\\05-Flyrank_ml\\flyrank-ml-internship-Explaining-Search-Performance\\work\\data\\processed\\model_predictions.csv",
+  "models": {
+    "CatBoost": {
+      "accuracy": 0.7598469821479172,
+      "average_precision": 0.6657739750074319,
+      "best_threshold": 0.4249999999999998,
+      "f1": 0.7045494160711173,
+      "precision": 0.5779239348012583,
+      "precision_at_10": 0.8,
+      "precision_at_100": 0.85,
+      "precision_at_20": 0.8,
+      "precision_at_50": 0.82,
+      "recall": 0.9022321428571428,
+      "roc_auc": 0.8504517101049635
+    },
+    "LightGBM": {
+      "accuracy": 0.7435534145650325,
+      "average_precision": 0.6632673565021043,
+      "best_threshold": 0.36999999999999983,
+      "f1": 0.6936357481381178,
+      "precision": 0.5586150490730644,
+      "precision_at_10": 0.9,
+      "precision_at_100": 0.83,
+      "precision_at_20": 0.85,
+      "precision_at_50": 0.82,
+      "recall": 0.9147321428571429,
+      "roc_auc": 0.849763211246516
+    },
+    "Logistic Regression": {
+      "accuracy": 0.7276848965712667,
+      "average_precision": 0.5478195257469944,
+      "best_threshold": 0.37499999999999983,
+      "f1": 0.6720136518771331,
+      "precision": 0.5439226519337017,
+      "precision_at_10": 0.9,
+      "precision_at_100": 0.73,
+      "precision_at_20": 0.65,
+      "precision_at_50": 0.74,
+      "recall": 0.8790178571428572,
+      "roc_auc": 0.7834835790636304
+    },
+    "Random Forest": {
+      "accuracy": 0.7282516293567582,
+      "average_precision": 0.6005188513946127,
+      "best_threshold": 0.4249999999999998,
+      "f1": 0.6803333333333333,
+      "precision": 0.5428191489361702,
+      "precision_at_10": 0.9,
+      "precision_at_100": 0.67,
+      "precision_at_20": 0.8,
+      "precision_at_50": 0.72,
+      "recall": 0.9111607142857143,
+      "roc_auc": 0.8253829111812846
+    },
+    "XGBoost": {
+      "accuracy": 0.7521960895437801,
+      "average_precision": 0.6602228893040423,
+      "best_threshold": 0.4199999999999998,
+      "f1": 0.6995361621714482,
+      "precision": 0.5685562691985478,
+      "precision_at_10": 0.7,
+      "precision_at_100": 0.83,
+      "precision_at_20": 0.75,
+      "precision_at_50": 0.86,
+      "recall": 0.9089285714285714,
+      "roc_auc": 0.8478328107394888
+    }
+  },
+  "test_rows": 7058,
+  "train_rows": 111033
+}
