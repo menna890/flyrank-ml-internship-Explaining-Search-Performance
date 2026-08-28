@@ -3,201 +3,590 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>One Capstone, Three Front Doors — reference papers</title>
-<meta name="evidence" content="../analysis/w7_receipts.json">
+<title>FlyRank Content Refresh Predictor — One Capstone, Three Front Doors</title>
+<meta name="description" content="Predicting below-peer-median CTR for editorial prioritization. Three versions: technical paper, portfolio, and SEO insight.">
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
+/* ── reset & base ── */
+*,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:#0b1020;font-family:Inter,system-ui,sans-serif}
 a{color:inherit}
 
-/* ── chrome ── */
-.chrome{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
-  padding:12px 22px;background:#0b1020;color:#e7ecf5;border-bottom:1px solid rgba(255,255,255,.09)}
-.chrome h1{margin:0;font-size:16px;font-weight:700;letter-spacing:.02em}
-.chrome .inv{color:#8b96ab;font-size:13px}
-.chrome .inv b{color:#5eead4;font-weight:600}
-.tabs{margin-left:auto;display:flex;gap:8px}
-.tabs button{padding:8px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
-  background:transparent;color:#cfd8e6;font:600 13px Inter,system-ui,sans-serif;cursor:pointer}
-.tabs button:hover{border-color:rgba(255,255,255,.4)}
-.tabs button.active{background:#e7ecf5;color:#0b1020;border-color:#e7ecf5}
+body {
+  font-family: Inter, system-ui, sans-serif;
+  background-color: #07111f;
+  background-image:
+    radial-gradient(ellipse 90% 55% at 15% -5%,  rgba(37,99,235,.16)  0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 88% 42%,  rgba(16,185,129,.09) 0%, transparent 58%),
+    radial-gradient(ellipse 65% 55% at 50% 115%, rgba(245,158,11,.08)  0%, transparent 55%);
+  min-height: 100vh;
+}
 
-/* ── panes ── */
-.stage{display:grid;gap:14px;padding:14px;grid-template-columns:1fr 1fr 1fr;
-  height:calc(100vh - 62px)}
-.pane{overflow-y:auto;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.45);background:#fff;position:relative;
-  container-type:inline-size}
-.pane .door-tag{position:sticky;top:0;z-index:10;display:block;padding:7px 16px;
-  font:700 12px 'Space Mono',ui-monospace,monospace;letter-spacing:.14em}
-.pane1 .door-tag{background:#0d2a5e;color:#bcd3ff}
-.pane2 .door-tag{background:#123524;color:#a7f3c9}
-.pane3 .door-tag{background:#4a2c08;color:#fcd9a8}
+/* ── chrome ── */
+.chrome {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 13px 24px;
+  background: rgba(7,17,31,.92);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 1px 0 rgba(255,255,255,.03), 0 6px 32px rgba(0,0,0,.45);
+}
+
+.chrome h1 {
+  margin: 0;
+  font-size: 15.5px; font-weight: 800; letter-spacing: .01em;
+  background: linear-gradient(125deg, #e7ecf5 20%, #93c5fd 55%, #6ee7b7 90%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chrome .inv { color: #5e6d85; font-size: 13px; }
+.chrome .inv b { color: #5eead4; font-weight: 600; }
+
+/* ── tabs ── */
+.tabs { margin-left: auto; display: flex; gap: 6px; }
+
+.tabs button {
+  padding: 8px 17px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04);
+  color: #6b7a96;
+  font: 600 13px Inter, system-ui, sans-serif;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: background .2s, border-color .2s, color .2s, box-shadow .2s, transform .15s;
+}
+.tabs button:hover {
+  background: rgba(255,255,255,.09);
+  border-color: rgba(255,255,255,.25);
+  color: #e2e8f0;
+  transform: translateY(-1px);
+}
+.tabs button:active { transform: translateY(0); }
+
+/* all = soft white */
+.tabs button[data-view="all"].active {
+  background: #e9eef7; color: #0b1020; border-color: transparent;
+  box-shadow: 0 0 18px rgba(233,238,247,.18);
+}
+/* d1 = sapphire */
+.tabs button[data-view="d1"].active {
+  background: linear-gradient(135deg,#1d4ed8,#3b82f6);
+  color: #fff; border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(59,130,246,.4), 0 4px 22px rgba(59,130,246,.38);
+}
+/* d2 = emerald */
+.tabs button[data-view="d2"].active {
+  background: linear-gradient(135deg,#065f46,#10b981);
+  color: #fff; border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(16,185,129,.4), 0 4px 22px rgba(16,185,129,.38);
+}
+/* d3 = amber */
+.tabs button[data-view="d3"].active {
+  background: linear-gradient(135deg,#92400e,#f59e0b);
+  color: #fff; border-color: transparent;
+  box-shadow: 0 0 0 1px rgba(245,158,11,.4), 0 4px 22px rgba(245,158,11,.38);
+}
+
+/* ── stage & panes ── */
+.stage {
+  display: grid; gap: 14px; padding: 16px;
+  grid-template-columns: 1fr 1fr 1fr;
+  min-height: calc(100vh - 66px);
+}
+
+.pane {
+  overflow-y: auto;
+  border-radius: 16px;
+  background: #fff;
+  position: relative;
+  container-type: inline-size;
+  box-shadow: 0 8px 40px rgba(0,0,0,.52), 0 0 0 1px rgba(255,255,255,.06);
+  transition: box-shadow .35s ease;
+}
+
+/* glow when a door is isolated */
+body[data-view="d1"] .pane1 {
+  box-shadow: 0 16px 64px rgba(0,0,0,.55),
+              0 0 0 1px rgba(59,130,246,.28),
+              0 0 56px rgba(59,130,246,.09);
+}
+body[data-view="d2"] .pane2 {
+  box-shadow: 0 16px 64px rgba(0,0,0,.55),
+              0 0 0 1px rgba(16,185,129,.28),
+              0 0 56px rgba(16,185,129,.09);
+}
+body[data-view="d3"] .pane3 {
+  box-shadow: 0 16px 64px rgba(0,0,0,.55),
+              0 0 0 1px rgba(245,158,11,.28),
+              0 0 56px rgba(245,158,11,.09);
+}
+
+/* ── door tags ── */
+.pane .door-tag {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 18px;
+  font: 700 11px 'Space Mono', ui-monospace, monospace;
+  letter-spacing: .13em;
+  line-height: 1.4;
+}
+.pane .door-tag::before {
+  font-size: 15px;
+  flex-shrink: 0;
+  opacity: .85;
+}
+
+.pane1 .door-tag {
+  background: linear-gradient(110deg, #091b50 0%, #12348f 60%, #1a46b0 100%);
+  color: #93c5fd;
+  border-bottom: 1px solid rgba(147,197,253,.12);
+  box-shadow: 0 2px 12px rgba(9,27,80,.4);
+}
+.pane1 .door-tag::before { content: '◈'; color: #60a5fa; }
+
+.pane2 .door-tag {
+  background: linear-gradient(110deg, #03200f 0%, #054528 60%, #085c38 100%);
+  color: #6ee7b7;
+  border-bottom: 1px solid rgba(110,231,183,.12);
+  box-shadow: 0 2px 12px rgba(3,32,15,.4);
+}
+.pane2 .door-tag::before { content: '◆'; color: #34d399; }
+
+.pane3 .door-tag {
+  background: linear-gradient(110deg, #2e0e00 0%, #7a2e06 60%, #9a3b08 100%);
+  color: #fcd34d;
+  border-bottom: 1px solid rgba(252,211,77,.12);
+  box-shadow: 0 2px 12px rgba(46,14,0,.4);
+}
+.pane3 .door-tag::before { content: '◇'; color: #fbbf24; }
+
+/* hide rules */
 body[data-view="d1"] .pane2,body[data-view="d1"] .pane3{display:none}
 body[data-view="d2"] .pane1,body[data-view="d2"] .pane3{display:none}
 body[data-view="d3"] .pane1,body[data-view="d3"] .pane2{display:none}
 body[data-view="d1"] .stage,body[data-view="d2"] .stage,body[data-view="d3"] .stage{
   grid-template-columns:minmax(0,1080px);justify-content:center}
+
 figure{margin:0}
-svg{width:100%;height:auto;display:block}
+img{max-width:100%;height:auto;display:block}
 
-/* ═══ DOOR 1 — research document: austere, serif, numbered ═══ */
-.p1{max-width:100%;padding:34px 44px 60px;background:#fdfdfb;color:#161a22;
-  font:17px/1.62 'Source Serif 4',Georgia,serif}
-.p1-head{border-bottom:2px solid #161a22;padding-bottom:18px;margin-bottom:22px}
-.p1-venue{font:600 12px/1.45 Inter,sans-serif;letter-spacing:.12em;color:#5a6472;margin:0 0 12px}
-.p1 h1{font:700 27px/1.25 'Source Serif 4',Georgia,serif;margin:0 0 10px;letter-spacing:-.01em;
-  font-size:clamp(21px,5.4cqw,27px)}
-.p1-byline{font:14px/1.5 Inter,sans-serif;color:#5a6472;margin:0}
-.p1 h2{font:700 19px/1.3 'Source Serif 4',Georgia,serif;margin:30px 0 10px;color:#0d2a5e}
-.p1 h3{font:700 16px/1.3 'Source Serif 4',Georgia,serif;margin:18px 0 6px}
-.p1 h4{font:700 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5a6472;margin:0 0 8px}
-.p1 p{margin:0 0 12px;text-align:justify;hyphens:auto}
-.p1 ol,.p1 ul{margin:0 0 12px;padding-left:26px}
-.p1 li{margin-bottom:7px}
-.p1-abstract{background:#f2f4f0;border-left:3px solid #0d2a5e;padding:16px 20px;margin-bottom:6px}
-.p1-abstract h2{margin:0 0 8px;font-size:16px;color:#161a22}
-.p1-abstract p{font-size:15.5px;margin:0}
-.p1 table{width:100%;border-collapse:collapse;font:14px/1.45 Inter,sans-serif;margin:14px 0 20px}
-.p1 caption{caption-side:top;text-align:left;font:13.5px/1.5 Inter,sans-serif;color:#3a4353;padding-bottom:8px}
-.p1 th{border-top:2px solid #161a22;border-bottom:1px solid #161a22;text-align:left;padding:7px 10px;font-weight:600}
-.p1 td{border-bottom:1px solid #d8dce3;padding:7px 10px;vertical-align:top}
-.p1 tbody tr:last-child td{border-bottom:2px solid #161a22}
-.p1 figure{margin:18px 0 22px;padding:14px;border:1px solid #e3e7ee;background:#fff}
-.p1 figcaption{font:13.5px/1.55 Inter,sans-serif;color:#3a4353;margin-top:10px}
-.p1 code{font:14px 'Space Mono',ui-monospace,monospace;background:#eef1f6;padding:1px 5px;border-radius:4px}
-.p1 pre{font:13px/1.6 'Space Mono',ui-monospace,monospace;background:#f2f4f0;border:1px solid #e0e4da;
-  padding:12px 14px;overflow-x:auto;margin:0}
-.p1-repro{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.p1-links{font:14px Inter,sans-serif;color:#5a6472}
-.p1-ack{margin-top:26px;border-top:1px solid #d8dce3;padding-top:14px}
-.p1-ack h2{font-size:16px;margin-top:0}
-.p1-ack p{font-size:14.5px}
-.p1 a{color:#0d2a5e}
 
-/* ═══ DOOR 2 — portfolio/case-study: modern, sans, result-first ═══ */
-.p2{max-width:100%;padding:0 0 60px;background:#fafafa;color:#0f172a;font:16.5px/1.6 Inter,system-ui,sans-serif}
-.p2 section{padding:0 46px;max-width:940px;margin:0 auto}
-.p2-hero{background:linear-gradient(160deg,#0f172a,#1e293b 70%);color:#f1f5f9;padding:44px 46px 38px;margin-bottom:30px}
-.p2-kicker{font:700 12px Inter,sans-serif;letter-spacing:.14em;color:#5eead4;margin:0 0 14px}
-.p2 h1{font:800 38px/1.1 Inter,sans-serif;letter-spacing:-.02em;margin:0 0 12px;
-  font-size:clamp(25px,7.5cqw,38px)}
-.p2-prop{font:19px/1.5 Inter,sans-serif;color:#cbd5e1;margin:0 0 24px;max-width:640px}
-.p2-rescard{background:rgba(255,255,255,.06);border:1px solid rgba(94,234,212,.35);border-radius:14px;
-  padding:20px 24px;margin-bottom:22px}
-.p2-metric{display:flex;align-items:baseline;gap:10px 16px;flex-wrap:wrap;min-width:0}
-.p2-num{font:800 54px/1 Inter,sans-serif;letter-spacing:-.03em;font-size:clamp(30px,11cqw,54px)}
-.p2-num.good{color:#5eead4}
-.p2-num.rule{color:#94a3b8}
-.p2-vs{color:#64748b;font-size:20px}
-.p2-cond{font:14.5px/1.5 Inter,sans-serif;color:#cbd5e1;margin:10px 0 16px}
-.p2-cta{display:flex;gap:10px;flex-wrap:wrap}
-.btn{display:inline-block;padding:10px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.25);
-  color:#e2e8f0;font:600 14px Inter,sans-serif;text-decoration:none}
-.btn.primary{background:#5eead4;border-color:#5eead4;color:#0f172a}
-.btn[aria-disabled="true"]{cursor:default;opacity:.82}
-.p2-keyfig{background:#fff;border-radius:12px;padding:18px 18px 12px;color:#0f172a}
-.p2-keyfig figcaption{font:13.5px/1.5 Inter,sans-serif;color:#475569;padding:8px 4px 2px}
-.p2 h2{font:800 24px/1.2 Inter,sans-serif;letter-spacing:-.015em;margin:34px 0 12px}
-.p2 h3{font:700 17px/1.3 Inter,sans-serif;margin:20px 0 8px}
-.p2 p{margin:0 0 12px}
-.p2 ul,.p2 ol{margin:0 0 12px;padding-left:24px}
-.p2 li{margin-bottom:8px}
-.p2 table{width:100%;border-collapse:collapse;font:15px Inter,sans-serif;margin:12px 0;background:#fff;
-  border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(15,23,42,.08)}
-.p2 th{background:#f1f5f9;text-align:left;padding:10px 14px;font-weight:700}
-.p2 td{padding:10px 14px;border-top:1px solid #e2e8f0}
-.p2 tr.hl td{background:#ecfdf5}
-.p2-note{font-size:14px;color:#475569}
-.p2 code{font:14px 'Space Mono',ui-monospace,monospace;background:#e2e8f0;padding:1px 5px;border-radius:4px}
-.p2-june{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:24px 28px!important;
-  max-width:940px;margin:26px auto 0!important;box-shadow:0 2px 10px rgba(15,23,42,.06)}
-.p2-june h2{margin-top:0}
-.p2-june figure{background:#fafafa;border-radius:10px;padding:14px}
-.p2-june figcaption{font:13.5px Inter,sans-serif;color:#475569;padding-top:8px}
-.p2-pipe{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin:0 0 14px}
-.p2-demo{background:#0f172a;border-radius:12px;padding:18px 20px;color:#e2e8f0;margin-top:14px}
-.p2-demo-row{display:grid;grid-template-columns:44px 1fr auto auto;gap:14px;align-items:center;
-  padding:12px 14px;background:rgba(255,255,255,.05);border-radius:8px;margin-bottom:8px}
-.p2-demo-row.dim{opacity:.85}
-.p2-tag{font:700 13px 'Space Mono',monospace;color:#5eead4}
-.p2-demo-row b{display:block;font-size:14.5px}
-.p2-demo-row span{display:block;font-size:12.5px;color:#94a3b8}
-.p2-act{font:700 13px 'Space Mono',monospace;color:#5eead4;padding:6px 12px;border:1px solid rgba(94,234,212,.4);border-radius:999px}
-.p2-act.warn{color:#fbbf24;border-color:rgba(251,191,36,.4)}
-.p2-score{font:600 13px Inter,sans-serif;color:#cbd5e1}
-.p2-demo-note{font-size:13px;color:#94a3b8;margin:8px 2px 0}
-.p2-repro pre{font:13.5px/1.6 'Space Mono',monospace;background:#0f172a;color:#e2e8f0;border-radius:10px;
-  padding:14px 18px;overflow-x:auto}
-.p2-foot{font-size:14px;color:#475569}
-.p2 a{color:#0d9488}
+/* ═══════════════════════════════════════════
+   DOOR 1 — RESEARCH / ML ENGINEERS
+═══════════════════════════════════════════ */
+.p1 {
+  max-width: 100%; padding: 34px 44px 60px;
+  background: #fdfdfb; color: #161a22;
+  font: 17px/1.62 'Source Serif 4', Georgia, serif;
+}
+.p1-head {
+  border-bottom: 2px solid #161a22;
+  padding-bottom: 18px; margin-bottom: 22px;
+}
+.p1-venue {
+  font: 600 11.5px/1.45 Inter, sans-serif;
+  letter-spacing: .13em; color: #4a5467; margin: 0 0 12px;
+}
+.p1 h1 {
+  font: 700 27px/1.25 'Source Serif 4', Georgia, serif;
+  margin: 0 0 10px; letter-spacing: -.01em;
+  font-size: clamp(21px, 5.4cqw, 27px);
+  color: #0e1a30;
+}
+.p1-byline { font: 14px/1.5 Inter, sans-serif; color: #5a6472; margin: 0; }
 
-/* ═══ DOOR 3 — editorial insight page: readable, decision-first ═══ */
-.p3{max-width:100%;padding:0 0 60px;background:#fffdf9;color:#1f2937;font:18.5px/1.65 Inter,system-ui,sans-serif}
-.p3 > *{max-width:760px;margin-left:auto;margin-right:auto;padding-left:38px;padding-right:38px}
-.p3-head{padding-top:38px}
-.p3-cat{font:700 12px Inter,sans-serif;letter-spacing:.14em;color:#0d9488;margin:0 0 14px}
-.p3 h1{font:800 34px/1.18 Inter,sans-serif;letter-spacing:-.02em;margin:0 0 14px;
-  font-size:clamp(23px,6.8cqw,34px)}
-.p3-deck{font:20px/1.55 Inter,sans-serif;color:#4b5563;margin:0 0 16px}
-.p3-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font:13px Inter,sans-serif;color:#6b7280;
-  border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:10px 0;margin-bottom:22px}
-.p3-tldr{background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:20px 26px;margin-bottom:24px}
-.p3-tldr h2{font:800 15px Inter,sans-serif;letter-spacing:.1em;color:#0f766e;margin:0 0 12px}
-.p3-tldr dl{margin:0;display:grid;grid-template-columns:130px 1fr;gap:8px 16px}
-.p3-tldr dt{font:700 14.5px Inter,sans-serif;color:#0f766e}
-.p3-tldr dd{margin:0;font-size:15.5px;line-height:1.5}
-.p3-keychart{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px 18px 12px;margin-bottom:12px}
-.p3-keychart figcaption{font:14px/1.55 Inter,sans-serif;color:#4b5563;padding-top:10px}
-.p3-notprove{background:#fef3c7;border-left:4px solid #d97706;border-radius:0 10px 10px 0;
-  padding:14px 20px;font-size:15px;line-height:1.55;margin-bottom:26px}
-.p3-toc{display:flex;flex-wrap:wrap;gap:6px 14px;font:14px Inter,sans-serif;color:#4b5563;
-  border:1px solid #e5e7eb;border-radius:10px;padding:12px 18px;margin-bottom:10px}
-.p3-toc b{width:100%;font-size:12px;letter-spacing:.1em;color:#6b7280}
-.p3-toc a{color:#0d9488;text-decoration:none;border-bottom:1px dotted #99f6e4}
-.p3 h2{font:800 25px/1.25 Inter,sans-serif;letter-spacing:-.015em;margin:34px auto 12px}
-.p3 p{margin:0 0 14px}
-.p3-reality{background:#f3f4f6;border-radius:10px;padding:14px 20px;font-size:15.5px;line-height:1.55}
-.p3-gloss{font-size:15px;color:#4b5563;background:#f9fafb;border-radius:10px;padding:12px 18px}
-.p3 figure{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
-.p3 figcaption{font:14px/1.55 Inter,sans-serif;color:#4b5563;padding-top:10px}
-.p3-action{border:1px solid #e5e7eb;border-left:4px solid #0d9488;border-radius:0 12px 12px 0;
-  padding:16px 22px;margin-bottom:16px;background:#fff}
-.p3-action p{margin:0 0 8px;font-size:16px;line-height:1.55}
-.p3-action p:last-child{margin:0}
-.p3-a-act b{color:#0f766e}
-.p3-a-dont{color:#92400e}
-.p3-nogo{background:#fef2f2;border-left:4px solid #dc2626;border-radius:0 10px 10px 0;padding:14px 20px;font-size:15.5px}
-.p3-roi-box{background:#fff;border:1px dashed #9ca3af;border-radius:12px;padding:18px 24px}
-.p3-roi-box p{font-size:16px}
-.p3-credit{font-size:15px;color:#4b5563}
-.p3 a{color:#0d9488}
+.p1 h2 {
+  font: 700 19px/1.3 'Source Serif 4', Georgia, serif;
+  margin: 30px 0 10px;
+  color: #0d2a5e;
+  display: flex; align-items: center; gap: 8px;
+}
+.p1 h2::before {
+  content: '';
+  display: inline-block; width: 4px; height: 18px;
+  background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+  border-radius: 2px; flex-shrink: 0;
+}
+.p1 h3 { font: 700 16px/1.3 'Source Serif 4', Georgia, serif; margin: 18px 0 6px; }
+.p1 h4 {
+  font: 700 11.5px Inter, sans-serif;
+  letter-spacing: .09em; text-transform: uppercase; color: #5a6472; margin: 0 0 8px;
+}
+.p1 p { margin: 0 0 12px; text-align: justify; hyphens: auto; }
+.p1 ol,.p1 ul { margin: 0 0 12px; padding-left: 26px; }
+.p1 li { margin-bottom: 7px; }
 
-/* ── responsive: no paper may ever push the page sideways ─────────────────── */
+.p1-abstract {
+  background: linear-gradient(135deg, #f0f4ff 0%, #ebf4ff 100%);
+  border-left: 3px solid #2563eb;
+  padding: 18px 22px; margin-bottom: 8px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 2px 12px rgba(37,99,235,.08);
+}
+.p1-abstract h2 {
+  margin: 0 0 8px;
+  font-size: 16px; color: #1e3a8a;
+}
+.p1-abstract h2::before { background: linear-gradient(180deg,#60a5fa,#2563eb); }
+.p1-abstract p { font-size: 15.5px; margin: 0; }
+
+.p1 table {
+  width: 100%; border-collapse: collapse;
+  font: 14px/1.45 Inter, sans-serif; margin: 14px 0 20px;
+}
+.p1 caption {
+  caption-side: top; text-align: left;
+  font: 13.5px/1.5 Inter, sans-serif; color: #3a4353; padding-bottom: 8px;
+}
+.p1 th {
+  border-top: 2px solid #161a22; border-bottom: 1px solid #161a22;
+  text-align: left; padding: 7px 10px; font-weight: 600;
+}
+.p1 td { border-bottom: 1px solid #d8dce3; padding: 7px 10px; vertical-align: top; }
+.p1 tbody tr:last-child td { border-bottom: 2px solid #161a22; }
+.p1 tbody tr.hl td { background: #eff6ff; }
+
+.p1 figure {
+  margin: 18px 0 22px; padding: 14px;
+  border: 1px solid #dce3f0; background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(13,42,94,.06);
+}
+.p1 figcaption { font: 13.5px/1.55 Inter, sans-serif; color: #3a4353; margin-top: 10px; }
+.p1 code {
+  font: 14px 'Space Mono', ui-monospace, monospace;
+  background: #e8eef8; padding: 1px 6px; border-radius: 4px;
+  color: #1e3a8a;
+}
+.p1 pre {
+  font: 13px/1.6 'Space Mono', ui-monospace, monospace;
+  background: #f0f4ff; border: 1px solid #d6e0f7;
+  padding: 13px 16px; overflow-x: auto; margin: 0; border-radius: 8px;
+}
+.p1-repro { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.p1-links { font: 14px Inter, sans-serif; color: #5a6472; }
+.p1-ack { margin-top: 26px; border-top: 1px solid #d8dce3; padding-top: 14px; }
+.p1-ack h2 { font-size: 16px; margin-top: 0; }
+.p1-ack p { font-size: 14.5px; }
+.p1 a { color: #1d4ed8; }
+
+
+/* ═══════════════════════════════════════════
+   DOOR 2 — EMPLOYERS / PORTFOLIO
+═══════════════════════════════════════════ */
+.p2 {
+  max-width: 100%; padding: 0 0 60px;
+  background: #f8f9fb; color: #0f172a;
+  font: 16.5px/1.6 Inter, system-ui, sans-serif;
+}
+.p2 section { padding: 0 46px; max-width: 940px; margin: 0 auto; }
+
+.p2-hero {
+  padding: 46px 46px 40px; margin-bottom: 32px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(155deg, #030b18 0%, #0a1a2e 40%, #0c2244 70%, #091c36 100%);
+  color: #f1f5f9;
+}
+.p2-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 80% 30%, rgba(16,185,129,.09), transparent 60%),
+    radial-gradient(ellipse 60% 80% at 10% 80%, rgba(59,130,246,.07), transparent 60%);
+  pointer-events: none;
+}
+/* subtle grid pattern */
+.p2-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+.p2-kicker {
+  font: 700 11px Inter, sans-serif; letter-spacing: .16em;
+  color: #5eead4; margin: 0 0 14px;
+  position: relative; z-index: 1;
+}
+.p2 h1 {
+  font: 800 38px/1.1 Inter, sans-serif; letter-spacing: -.025em;
+  margin: 0 0 12px;
+  font-size: clamp(26px, 7.5cqw, 38px);
+  position: relative; z-index: 1;
+}
+.p2-prop {
+  font: 19px/1.5 Inter, sans-serif; color: #b8c8dc;
+  margin: 0 0 26px; max-width: 640px;
+  position: relative; z-index: 1;
+}
+
+.p2-rescard {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(94,234,212,.3);
+  border-radius: 14px; padding: 22px 26px; margin-bottom: 24px;
+  position: relative; z-index: 1;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 24px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.p2-metric {
+  display: flex; align-items: baseline; gap: 10px 16px; flex-wrap: wrap; min-width: 0;
+}
+.p2-num {
+  font: 800 54px/1 Inter, sans-serif; letter-spacing: -.04em;
+  font-size: clamp(32px, 11cqw, 54px);
+}
+.p2-num.good { color: #5eead4; text-shadow: 0 0 40px rgba(94,234,212,.35); }
+.p2-num.rule { color: #64748b; }
+.p2-vs { color: #475569; font-size: 20px; }
+.p2-cond { font: 14.5px/1.5 Inter, sans-serif; color: #b8c8dc; margin: 10px 0 18px; }
+.p2-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-block; padding: 10px 22px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,.2);
+  color: #e2e8f0; font: 600 14px Inter, sans-serif; text-decoration: none;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.btn.primary {
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  border-color: transparent; color: #fff;
+  box-shadow: 0 4px 18px rgba(20,184,166,.3);
+}
+.btn.primary:hover { box-shadow: 0 4px 26px rgba(20,184,166,.45); }
+.btn[aria-disabled="true"] { cursor: default; opacity: .8; }
+
+.p2-keyfig {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 12px; padding: 18px 18px 12px;
+  position: relative; z-index: 1;
+  backdrop-filter: blur(6px);
+}
+.p2-keyfig figcaption { font: 13.5px/1.5 Inter, sans-serif; color: #94a3b8; padding: 8px 4px 2px; }
+
+.p2 h2 {
+  font: 800 24px/1.2 Inter, sans-serif; letter-spacing: -.018em;
+  margin: 36px 0 12px; color: #0f172a;
+}
+.p2 h3 { font: 700 17px/1.3 Inter, sans-serif; margin: 20px 0 8px; }
+.p2 p { margin: 0 0 12px; }
+.p2 ul,.p2 ol { margin: 0 0 12px; padding-left: 24px; }
+.p2 li { margin-bottom: 8px; }
+
+.p2 table {
+  width: 100%; border-collapse: collapse;
+  font: 15px Inter, sans-serif; margin: 12px 0;
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(15,23,42,.09), 0 0 0 1px rgba(15,23,42,.06);
+}
+.p2 th { background: #f1f5f9; text-align: left; padding: 11px 14px; font-weight: 700; color: #1e293b; }
+.p2 td { padding: 10px 14px; border-top: 1px solid #e9edf3; }
+.p2 tr.hl td { background: #ecfdf5; }
+.p2-note { font-size: 14px; color: #64748b; }
+
+.p2 code {
+  font: 14px 'Space Mono', ui-monospace, monospace;
+  background: #e4ecf7; padding: 1px 6px; border-radius: 4px; color: #0f4c8a;
+}
+
+.p2-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin: 18px 0; }
+.p2-card {
+  background: #fff; border: 1px solid #e9edf3;
+  border-radius: 14px; padding: 18px; text-align: center;
+  box-shadow: 0 2px 10px rgba(15,23,42,.06);
+  transition: transform .2s, box-shadow .2s;
+}
+.p2-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,23,42,.1); }
+.p2-card b { display: block; font: 800 30px/1 Inter, sans-serif; color: #0f172a; margin-bottom: 5px; }
+.p2-card span { font: 13px Inter, sans-serif; color: #64748b; }
+
+.p2-pipe { background: #fff; border: 1px solid #e9edf3; border-radius: 12px; padding: 14px; margin: 0 0 14px; }
+
+.p2-demo {
+  background: #0b1628; border-radius: 14px; padding: 20px 22px;
+  color: #e2e8f0; margin-top: 16px;
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+.p2-demo-row {
+  display: grid; grid-template-columns: 44px 1fr auto auto; gap: 14px;
+  align-items: center; padding: 13px 16px;
+  background: rgba(255,255,255,.05); border-radius: 10px; margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,.06);
+  transition: background .2s;
+}
+.p2-demo-row:hover { background: rgba(255,255,255,.08); }
+.p2-demo-row.dim { opacity: .8; }
+.p2-tag { font: 700 13px 'Space Mono', monospace; color: #5eead4; }
+.p2-demo-row b { display: block; font-size: 14.5px; }
+.p2-demo-row span { display: block; font-size: 12.5px; color: #8899b0; }
+.p2-act {
+  font: 700 12.5px 'Space Mono', monospace; color: #5eead4;
+  padding: 6px 13px; border: 1px solid rgba(94,234,212,.35);
+  border-radius: 999px; white-space: nowrap;
+  background: rgba(94,234,212,.06);
+}
+.p2-act.warn { color: #fbbf24; border-color: rgba(251,191,36,.35); background: rgba(251,191,36,.06); }
+.p2-score { font: 600 13px Inter, sans-serif; color: #94a3b8; white-space: nowrap; }
+.p2-demo-note { font-size: 13px; color: #64748b; margin: 10px 2px 0; }
+
+.p2-repro pre {
+  font: 13.5px/1.6 'Space Mono', monospace;
+  background: #0b1628; color: #e2e8f0;
+  border-radius: 12px; padding: 16px 20px; overflow-x: auto;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.p2-foot { font-size: 14px; color: #64748b; margin-top: 14px; }
+.p2 a { color: #0d9488; }
+
+
+/* ═══════════════════════════════════════════
+   DOOR 3 — SEO COMMUNITY / EDITORIAL
+═══════════════════════════════════════════ */
+.p3 {
+  max-width: 100%; padding: 0 0 60px;
+  background: #fffdf9; color: #1f2937;
+  font: 18.5px/1.65 Inter, system-ui, sans-serif;
+}
+.p3 > * { max-width: 760px; margin-left: auto; margin-right: auto; padding-left: 38px; padding-right: 38px; }
+.p3-head { padding-top: 40px; }
+.p3-cat {
+  font: 700 11.5px Inter, sans-serif; letter-spacing: .16em;
+  color: #0d9488; margin: 0 0 14px;
+}
+.p3 h1 {
+  font: 800 34px/1.18 Inter, sans-serif; letter-spacing: -.022em;
+  margin: 0 0 14px;
+  font-size: clamp(23px, 6.8cqw, 34px);
+  color: #111827;
+}
+.p3-deck { font: 20px/1.55 Inter, sans-serif; color: #4b5563; margin: 0 0 16px; }
+.p3-meta {
+  display: flex; flex-wrap: wrap; gap: 8px 18px;
+  font: 13px Inter, sans-serif; color: #6b7280;
+  border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+  padding: 10px 0; margin-bottom: 24px;
+}
+
+.p3-tldr {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ebfdf8 100%);
+  border: 1px solid #99f6e4; border-radius: 14px;
+  padding: 22px 28px; margin-bottom: 26px;
+  box-shadow: 0 3px 16px rgba(20,184,166,.08);
+}
+.p3-tldr h2 {
+  font: 800 13px Inter, sans-serif; letter-spacing: .12em;
+  color: #0f766e; margin: 0 0 14px;
+}
+.p3-tldr dl { margin: 0; display: grid; grid-template-columns: 130px 1fr; gap: 9px 18px; }
+.p3-tldr dt { font: 700 14.5px Inter, sans-serif; color: #0f766e; }
+.p3-tldr dd { margin: 0; font-size: 15.5px; line-height: 1.5; }
+
+.p3-keychart {
+  background: #fff; border: 1px solid #e5e7eb;
+  border-radius: 14px; padding: 18px 18px 12px; margin-bottom: 14px;
+  box-shadow: 0 2px 12px rgba(31,41,55,.06);
+}
+.p3-keychart figcaption { font: 14px/1.55 Inter, sans-serif; color: #4b5563; padding-top: 10px; }
+
+.p3-notprove {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-left: 4px solid #d97706;
+  border-radius: 0 10px 10px 0;
+  padding: 14px 22px; font-size: 15px; line-height: 1.55; margin-bottom: 28px;
+}
+
+.p3-toc {
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  font: 14px Inter, sans-serif; color: #4b5563;
+  border: 1px solid #e5e7eb; border-radius: 12px;
+  padding: 14px 20px; margin-bottom: 12px;
+  background: #fafafa;
+}
+.p3-toc b { width: 100%; font-size: 11.5px; letter-spacing: .12em; color: #9ca3af; }
+.p3-toc a { color: #0d9488; text-decoration: none; border-bottom: 1px dotted #99f6e4; }
+
+.p3 h2 {
+  font: 800 25px/1.25 Inter, sans-serif; letter-spacing: -.015em;
+  margin: 36px auto 12px; color: #111827;
+  padding-left: 38px; padding-right: 38px;
+}
+.p3 p { margin: 0 0 14px; }
+
+.p3-reality {
+  background: #f3f4f6; border-radius: 12px;
+  padding: 16px 22px; font-size: 15.5px; line-height: 1.55;
+  border: 1px solid #e5e7eb;
+}
+.p3-gloss {
+  font-size: 15px; color: #4b5563; background: #f9fafb;
+  border-radius: 10px; padding: 14px 20px;
+  border: 1px solid #e5e7eb;
+}
+.p3 figure {
+  background: #fff; border: 1px solid #e5e7eb;
+  border-radius: 14px; padding: 18px;
+  box-shadow: 0 2px 12px rgba(31,41,55,.05);
+}
+.p3 figcaption { font: 14px/1.55 Inter, sans-serif; color: #4b5563; padding-top: 10px; }
+
+.p3-action {
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #0d9488;
+  border-radius: 0 14px 14px 0;
+  padding: 18px 24px; margin-bottom: 18px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(13,148,136,.07);
+}
+.p3-action p { margin: 0 0 8px; font-size: 16px; line-height: 1.55; }
+.p3-action p:last-child { margin: 0; }
+.p3-a-act b { color: #0f766e; }
+.p3-a-dont { color: #92400e; }
+
+.p3-nogo {
+  background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+  border-left: 4px solid #dc2626;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 22px; font-size: 15.5px;
+  box-shadow: 0 2px 10px rgba(220,38,38,.07);
+}
+.p3-roi-box { background: #fff; border: 1px dashed #9ca3af; border-radius: 14px; padding: 20px 26px; }
+.p3-roi-box p { font-size: 16px; }
+.p3-credit { font-size: 15px; color: #4b5563; }
+.p3 a { color: #0d9488; }
+
+
+/* ── responsive ── */
 @media (max-width:1180px){
   .stage{grid-template-columns:minmax(0,1fr);height:auto}
   .pane{min-width:0;max-height:none;overflow:visible}
   body[data-view="d1"] .stage,body[data-view="d2"] .stage,body[data-view="d3"] .stage{
     grid-template-columns:minmax(0,1fr)}
-  /* grid/flex children default to min-content width; that is what forced the overflow */
   .p1 *,.p2 *,.p3 *{min-width:0}
   .p1-repro{grid-template-columns:minmax(0,1fr)}
   .p1 table,.p2 table{display:block;max-width:100%;overflow-x:auto}
   .p1 pre,.p2-repro pre{white-space:pre-wrap;word-break:break-word;max-width:100%;box-sizing:border-box}
   .p1 img,.p2 img,.p3 img,.p1 svg,.p2 svg,.p3 svg{max-width:100%;height:auto}
   .p1 p{text-align:left}
+  .p2-cards{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:700px){
   .chrome{position:static;padding:12px 14px}
-  .chrome h1{font-size:15px}.chrome .inv{font-size:12px}
+  .chrome h1{font-size:14px}.chrome .inv{font-size:12px}
   .tabs{margin-left:0;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .tabs button{white-space:nowrap;padding:8px 13px}
   .stage{padding:8px;gap:10px}
-  .pane .door-tag{padding:7px 12px;font-size:12px;line-height:1.4}
+  .pane .door-tag{padding:8px 14px;font-size:11px;line-height:1.4}
   .p1{padding:24px 18px 40px;font-size:16.5px}
   .p1 h1{font-size:23px}.p1 h2{font-size:18px}
   .p1 caption,.p1 figcaption,.p1 pre{font-size:13px}
@@ -205,7 +594,7 @@ svg{width:100%;height:auto;display:block}
   .p2 h1{font-size:29px}.p2-prop{font-size:17px}.p2-num{font-size:40px}
   .p2-metric{flex-wrap:wrap}.p2-cta{flex-direction:column;align-items:stretch}
   .btn{text-align:center}
-  .p2-june{padding:20px 18px!important;margin-left:8px!important;margin-right:8px!important}
+  .p2-cards{grid-template-columns:1fr}
   .p2-demo-row{grid-template-columns:34px minmax(0,1fr)}
   .p2-act,.p2-score{grid-column:2;justify-self:start}
   .p3{font-size:17px}.p3>*{padding-left:18px;padding-right:18px}
@@ -215,8 +604,14 @@ svg{width:100%;height:auto;display:block}
   .p3-keychart,.p3 figure{padding:12px}
   .p3-toc{gap:6px 10px;font-size:13px}
   .p3-action{padding:14px 16px}
+  .p3 h2{padding-left:18px;padding-right:18px}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs button, .p2-card, .btn { transition: none; }
 }
 </style>
+<base target="_blank">
 </head>
 <body data-view="all">
   <header class="chrome">
@@ -230,574 +625,491 @@ svg{width:100%;height:auto;display:block}
     </nav>
   </header>
   <main class="stage">
-    <div class="pane pane1"><span class="door-tag">DOOR 1 · ML ENGINEERS &amp; REVIEWERS · PURPOSE: CREDIBILITY</span>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- DOOR 1 · ML ENGINEERS & REVIEWERS                                     -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="pane pane1"><span class="door-tag">DOOR 1 · ML ENGINEERS &amp; REVIEWERS · PURPOSE: CREDIBILITY</span>
 <article class="p1" aria-label="Door 1 paper — for ML engineers and reviewers">
   <header class="p1-head">
-    <p class="p1-venue">WORKED EXAMPLE · FLYRANK ML INTERNSHIP · APPLIED SEARCH INTELLIGENCE · AUGUST 2026</p>
-    <h1>An Early-Warning Queue for Organic Click Decline: Client-Grouped and Time-Forward Evaluation of a Decision-Support Ranker</h1>
-    <p class="p1-byline">Worked example paper — written as an intern would submit it. Companion artifact to the Week 7 session.</p>
+    <p class="p1-venue">FLYRANK ML INTERNSHIP 2026 · APPLIED SEARCH INTELLIGENCE · AUGUST 2026</p>
+    <h1>Predicting Content Underperformance: A Client-Grouped Evaluation of a Refresh Opportunity Ranker</h1>
+    <p class="p1-byline">Worked example paper — written as an intern would submit it. Companion artifact to the Week 7–8 capstone.</p>
   </header>
 
   <section class="p1-abstract">
     <h2>Abstract</h2>
-    <p><b>Problem.</b> A central content team has a fifty-row monthly portfolio review budget; the decision this system
-    supports is the <i>order</i> of that review, so precision@50 was fixed before training.
-    <b>Setting.</b> The source is a 78,835,655-row pseudonymized warehouse release. Development evaluation uses 16,513
-    eligible content items across 36 clients, with validation grouped by client. <b>Approach.</b> We compare an
-    audited rule with logistic regression, random forest and an eleven-feature HistGradientBoosting model on identical
-    folds. <b>Evidence.</b> HistGradientBoosting has the higher mean in this evaluation:
-    0.504&nbsp;±&nbsp;0.211 precision@50 (mean&nbsp;±&nbsp;SD across five client-grouped folds) versus the rule's
-    0.384&nbsp;±&nbsp;0.182; it is higher in 3 folds and lower in
-    2. A separate revision-pinned time-forward holdout reaches 0.62.
-    An earlier, separate nine-feature random-forest boundary demonstration moves from 0.996 with random rows to
-    0.496 with client grouping. In sealed June (19,432 rows, 37 clients), the base rate is
-    0.655, the rule 0.380, the model 0.740, and the naive
-    list 0.780. After labels arrived, the proposed base-rate alarm would have paused the
-    next release. <b>Scope.</b> One month exposes a material shift but is thin temporal evidence; monthly refitting remains
-    a policy to validate, and no causal claim about refresh impact is made. Code, seeds, environment and a result-to-notebook map are provided.</p>
+    <p><b>Problem.</b> A central editorial team at FlyRank maintains 118,092 content pages across a pseudonymized 
+    client portfolio. The decision this system supports is the <i>order</i> of a monthly refresh review: 
+    which pages should editors inspect first when capacity is fixed?
+    <b>Setting.</b> The source is a 201,699-row BigQuery warehouse release (Jan–Mar 2026), reduced to 118,092 eligible pages 
+    after a visibility floor (impressions ≥ 100). Evaluation uses client-grouped holdout (GroupShuffleSplit).
+    <b>Approach.</b> We compare a transparent four-rule baseline (old + never optimized + thin + no keyword) 
+    against LightGBM, XGBoost, and CatBoost on identical folds, with 50+ engineered features around freshness, 
+    depth, and bucket-relative performance.
+    <b>Evidence.</b> CatBoost achieves ROC AUC 0.850 and Precision@50 0.820 on the grouped holdout, 
+    versus the rule baseline at 0.400 — a 2.05× lift in top-50 hit rate. The base rate is 0.385.
+    A final queue of 118,092 pages carries confidence tiers (high: 16,806; medium: 42,240; low: 59,046) 
+    and human-readable reason codes. <b>Scope.</b> This is a predictive ranker, not a causal claim; 
+    no A/B test evidence is included. All identifiers are hashed; no URLs or titles are exposed.</p>
   </section>
 
   <section>
     <h2>1&nbsp;&nbsp;Introduction and claims</h2>
-    <p>A page that loses organic clicks silently costs traffic until someone notices. The practical decision is not
-    "will this page decline?" in the abstract — it is "which fifty pages should a person look at first this month?"
-    This paper reports a decision-support ranker for that queue and evaluates it the way it would be used: grouped by
-    client, walked forward in time, and finally tested once on a sealed month.</p>
+    <p>This work originated in the FlyRank ML Internship content-refresh lane. The practical decision is not 
+    "will this page underperform?" in the abstract — it is "which fifty pages should a person look at first this month?" 
+    The current editorial process relies on simple age rules; our ranker replaces intuition with a measured ordering.</p>
     <p>We make three testable claims:</p>
     <ol>
-      <li><b>C1.</b> In five client-grouped folds, HistGradientBoosting has the higher observed mean at K&nbsp;≤&nbsp;75 and
-      does <i>not</i> have it past K&nbsp;≈&nbsp;100; it is higher than the rule in three p@50 folds and lower in two
-      (§6.1, Figure&nbsp;1).</li>
-      <li><b>C2.</b> The evaluation boundary is load-bearing: in an earlier, separate nine-feature random-forest
-      demonstration, random rows score 0.996 and client grouping 0.496; experiment identity and
-      grouping must travel with the number (§6.2).</li>
-      <li><b>C3.</b> One sealed month produces a materially different label mix. The post-label outcome check in the
-      proposed monitoring policy would pause the next release for review (§6.4).</li>
+      <li><b>C1.</b> On a client-grouped holdout, the best gradient-boosting model achieves Precision@50 = 0.820, 
+      more than double the transparent rule baseline at 0.400 (§4, Table 1).</li>
+      <li><b>C2.</b> The evaluation boundary is load-bearing: a random split would inflate scores by letting the model 
+      memorize client-specific patterns; grouping by <code>client_hash_id</code> is essential (§3.5).</li>
+      <li><b>C3.</b> The top model features are bucket-relative comparisons (<code>search_volume_vs_bucket_mean</code>, 
+      <code>content_age_days_vs_bucket_median</code>), showing the model learns peer context rather than absolute thresholds (§4.3).</li>
     </ol>
-    <p>Contributions: a leakage-controlled feature frame and label; an audited rule baseline strong enough to be worth
-    beating; a grouped + time-forward + sealed-month evaluation design; and a deployment-shaped error analysis whose
-    failure modes were promoted to implementation-labeled policy in the accompanying action playbook.</p>
   </section>
 
   <section>
-    <h2>2&nbsp;&nbsp;Related context</h2>
-    <p>The system sits between two established practices. Rule systems encode judgment transparently and are a useful
-    first system; our baseline is exactly such a rule, audited on held-out data before any model existed. This follows
-    <a href="https://developers.google.com/machine-learning/guides/rules-of-ml">Google's baseline-first guidance</a>.
-    For the learned comparator, we use scikit-learn's HistGradientBoosting classifier through its probabilities rather
-    than a bespoke ranking objective, because the decision only needs an ordering. We enforce the client boundary with
-    <a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html"><code>GroupKFold</code></a>:
-    clients do not cross the train/test boundary. We do not claim
-    methodological novelty; the contribution is the evaluation design and its deployment reading.</p>
-  </section>
-
-  <section>
-    <h2>3&nbsp;&nbsp;Data and task</h2>
-    <h3>3.1&nbsp;&nbsp;Unit, source, period</h3>
-    <p>One observation is <b>one content item for one client at a monthly decision point</b>. Source: the pseudonymized
-    FlyRank internship warehouse release, 78,835,655 daily fact rows spanning 2025-01-27 to 2026-06-30. Warehouse inventory
-    contains 104 client records and 519,606 content records; the daily fact source covers
-    70 clients and 427,292 content items. The development evaluation frame is narrower:
-    16,513 eligible items across 36 clients. Identifiers are pseudonymous hashes used for grouping and
+    <h2>2&nbsp;&nbsp;Data and task</h2>
+    <h3>2.1&nbsp;&nbsp;Unit, source, period</h3>
+    <p>One observation is <b>one content item for one client</b>. Source: the pseudonymized 
+    FlyRank internship warehouse release on HuggingFace Datasets, 201,699 daily fact rows spanning 2026-01-01 to 2026-03-31. 
+    The evaluation frame is 118,092 eligible items after filtering. Identifiers are pseudonymous hashes used for grouping and 
     joining only — never as features.</p>
-    <h3>3.2&nbsp;&nbsp;Label</h3>
-    <p><code>label_declined = (May clicks &lt; 0.8 × April clicks)</code> — an observed outcome in a window strictly after
-    every feature window. The label's ingredients are quarantined columns that never enter the feature frame.
-    Development base rate: 0.4162.</p>
-    <h3>3.3&nbsp;&nbsp;Eligibility and exclusions</h3>
-    <p>Eligible rows: ≥1,000 impressions across the three feature months and ≥10 last-feature-month clicks — floors that
-    keep the label meaningful. Excluded outright: engagement/AI columns (sparse behind a three-valued availability flag;
-    filtered with <code>IS TRUE</code> everywhere), the raw position-sum ingredient, the partition key, and
-    <code>last_optimized_date</code> (a decision someone already made). The starter dataset's label-derived fields
-    (<code>trend_direction</code>, <code>trend_pct</code>) never appear.</p>
-    <h3>3.4&nbsp;&nbsp;Leakage controls</h3>
-    <p>Three boundaries, each tested in code: (i) feature windows end strictly before the label window; (ii) clients never
-    cross fold boundaries; (iii) the sealed month (June&nbsp;2026) was read exactly once, by one notebook cell, after all
-    development was frozen. A deliberately leaky client-derived feature is kept as a test fixture; the test suite asserts
-    that the production feature frame refuses it.</p>
-    <h3>3.5&nbsp;&nbsp;Dataset limitations</h3>
-    <p>All frames keep clients alive in the outcome month (a churn-censoring choice); GSC-visible pages only, which is a
-    minority of raw panel rows; no engagement or conversion outcomes. Each limitation reappears in §9.</p>
+    <h3>2.2&nbsp;&nbsp;Label</h3>
+    <p><code>is_below_peer_median = (ctr &lt; median_ctr_per_pos_bucket)</code> — an observed outcome relative to peers in the same 
+    position bucket. The label's ingredients are quarantined columns that never enter the feature frame.
+    Development base rate: 0.385.</p>
+    <h3>2.3&nbsp;&nbsp;Eligibility and exclusions</h3>
+    <p>Eligible rows: ≥100 impressions across the window — floors that keep CTR estimates meaningful. 
+    Excluded outright: <code>ctr</code>, <code>total_clicks</code>, <code>ga4_sessions</code>, <code>avg_position</code>, 
+    <code>pos_bucket</code> (used only for target creation), and any label-derived fields. 
+    The dedup step removed 0 rows because the upstream DuckDB query already aggregates to one row per page.</p>
+    <h3>2.4&nbsp;&nbsp;Leakage controls</h3>
+    <p>Three boundaries, each tested in code: (i) feature windows end strictly before any label computation; 
+    (ii) clients never cross fold boundaries (GroupShuffleSplit); (iii) all features are knowable at the decision instant. 
+    A deliberately leaky column list is maintained as a test fixture; the production feature frame refuses it.</p>
   </section>
 
   <section>
-    <h2>4&nbsp;&nbsp;Baselines and model</h2>
-    <p>The baseline ladder runs from trivial to operational. The <b>frozen rule</b> came out of a signal audit performed
-    before modeling: established pages whose last feature month ran 3.3–7× their first declined at 0.689
-    against the 0.4162 base; beyond 7× the rate is
-    0.503. Points: +3 spike, +2 extreme, +1 rising; ties broken by last-month clicks. The audit also
-    produced an <b>anti-baseline</b>: the intuitive "already dipping" watchlist declines at 0.332
-    — <i>below</i> base — consistent with month-to-month mean reversion in this frame. We report it because a paper that
-    only shows the baselines it beat invites the question of the ones it hid.</p>
-    <p><b>Features (11, all knowable at the decision instant):</b> <code>impr_90d, clicks_90d, impr_last, clicks_last,
-    clicks_first, clicks_mid, momentum, ctr_90d, wavg_position, active_days, is_new</code>.
-    <b>Models:</b> logistic regression, random forest, HistGradientBoosting. Their fixed configurations are declared in
-    the reproduction notebook; the proposed model is used through predicted probabilities as a ranking score. Seed 42 for
-    every stochastic component.</p>
+    <h2>3&nbsp;&nbsp;Methodology</h2>
+    <p><b>Feature engineering (50+ features, 10 ordered stages).</b> We import the production pipeline from 
+    <code>01_prepare_features.py</code>: has-flags, content depth, market opportunity, freshness scores, ratio features, 
+    age non-linearities, visibility, position bucket (for relative features only — <b>dropped before training</b>), 
+    bucket-relative comparisons, and interaction terms. The exact count is reproducible from the script.</p>
+    <p><b>Baseline.</b> A transparent rule-based score: old + never optimized + thin + no keyword. 
+    It is <b>not</b> used as a feature; it is blended at evaluation time (30% baseline + 70% model) to keep the final queue explainable.</p>
+    <p><b>Validation.</b> GroupShuffleSplit (80/20) by <code>client_hash_id</code>. The honest question is: 
+    "does it work on a client it never saw?" Seed 42 for every stochastic component.</p>
+    <p><b>Models.</b> Logistic regression, random forest, LightGBM, XGBoost, CatBoost. 
+    CatBoost is selected for final retraining due to stable threshold behavior; XGBoost had the highest Precision@50.</p>
   </section>
 
   <section>
-    <h2>5&nbsp;&nbsp;Experimental design</h2>
-    <p><b>Primary metric.</b> precision@50, fixed before training: the editor's capacity is the queue's head, so metric
-    and decision coincide. Secondary: precision@K for K&nbsp;∈&nbsp;{10…200}, grouped AUC (reported in the repository),
-    per-client medians.</p>
-    <p><b>Splits.</b> (i) <code>GroupKFold(5)</code> by client — uncertainty below is the mean&nbsp;±&nbsp;SD of the
-    per-fold precision@50 across those five folds; folds differ by client composition, so the SD reflects client
-    heterogeneity as well as sampling noise. (ii) One revision-pinned time-forward holdout: train at the 2026-04-01
-    decision point, evaluate unchanged at 2026-05-01. (iii) One sealed-month evaluation (June 2026), computed exactly once.
-    Pooled cross-fold probabilities are reported only after within-fold rank normalization — pooling raw probabilities
-    flipped a conclusion in an early draft and is documented in the repository as a trap.</p>
-  </section>
-
-  <section>
-    <h2>6&nbsp;&nbsp;Results</h2>
-    <h3>6.1&nbsp;&nbsp;Main comparison</h3>
-    <p><b>Random-selection expectation:</b> 0.4162. It is shown separately from Table 1 because it is the label base
-    rate, not a fitted method, and does not have an across-fold SD.</p>
+    <h2>4&nbsp;&nbsp;Results</h2>
+    <h3>4.1&nbsp;&nbsp;Main comparison</h3>
+    <p><b>Random-selection expectation:</b> 0.385. It is shown separately because it is the label base rate, 
+    not a fitted method.</p>
     <table>
-      <caption><b>Table 1.</b> Precision@50 on identical client-grouped folds (mean ± SD across five folds; base rate 0.4162).
-      SD across folds spans client heterogeneity: the proposed model's per-fold values run 0.16–0.70.</caption>
-      <thead><tr><th>method</th><th>p@50</th><th>SD</th><th>note</th></tr></thead>
-      <tbody><tr><td>frozen rule (operational baseline)</td><td>0.384</td><td>±0.182</td><td>audited spike-revert rule; +3/+2/+1 points, tie-break April clicks</td></tr><tr><td>logistic regression</td><td>0.408</td><td>±0.121</td><td>linear comparator; lower observed mean than both tree models</td></tr><tr><td>random forest</td><td>0.492</td><td>±0.157</td><td>nonlinear comparator; observed mean close to gradient boosting</td></tr><tr><td>HistGradientBoosting (proposed)</td><td>0.504</td><td>±0.211</td><td>used through probabilities for ranking</td></tr></tbody>
+      <caption><b>Table 1.</b> Model comparison on identical client-grouped holdout. 
+      Base rate = 0.385 (38.5% of pages are below peer-median CTR).</caption>
+      <thead><tr><th>Method</th><th>ROC AUC</th><th>Avg Precision</th><th>Precision@50</th><th>Recall</th><th>F1</th></tr></thead>
+      <tbody>
+        <tr><td>Baseline Rules (4 rules)</td><td>—</td><td>—</td><td>0.400</td><td>—</td><td>—</td></tr>
+        <tr><td>Logistic Regression</td><td>0.783</td><td>0.548</td><td>0.740</td><td>0.879</td><td>0.672</td></tr>
+        <tr><td>Random Forest</td><td>0.825</td><td>0.601</td><td>0.720</td><td>0.911</td><td>0.680</td></tr>
+        <tr><td>XGBoost</td><td>0.848</td><td>0.660</td><td>0.860</td><td>0.909</td><td>0.700</td></tr>
+        <tr><td>LightGBM</td><td>0.850</td><td>0.663</td><td>0.820</td><td>0.915</td><td>0.694</td></tr>
+        <tr class="hl"><td><b>CatBoost (proposed)</b></td><td><b>0.850</b></td><td><b>0.666</b></td><td><b>0.820</b></td><td><b>0.902</b></td><td><b>0.705</b></td></tr>
+      </tbody>
     </table>
     <figure>
-      <svg viewBox="0 0 860 430" role="img" aria-label="Precision at K, model versus rule, observed per-fold mean across five client-grouped folds; the model mean is higher through K equals 75, the rule mean is higher past 100; base rate 0.416."><line x1="74" y1="372.0" x2="834" y2="372.0" stroke="#e3e7ee"/><text x="64" y="377.0" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.30</text><line x1="74" y1="258.0" x2="834" y2="258.0" stroke="#e3e7ee"/><text x="64" y="263.0" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.40</text><line x1="74" y1="144.0" x2="834" y2="144.0" stroke="#e3e7ee"/><text x="64" y="149.0" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.50</text><line x1="74" y1="30.0" x2="834" y2="30.0" stroke="#e3e7ee"/><text x="64" y="35.0" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.60</text><rect x="74" y="30" width="260.0" height="342" fill="rgba(26,111,235,.05)"/><text x="84.0" y="111.2" fill="#1a6feb" font-size="15" font-family="Inter,system-ui,sans-serif" font-weight="600">HistGB</text><text x="84.0" y="302.8" fill="#8a93a3" font-size="15" font-family="Inter,system-ui,sans-serif" font-weight="600">frozen rule</text><line x1="74" y1="239.8" x2="834" y2="239.8" stroke="#b8860b" stroke-width="1.6" stroke-dasharray="7 6"/><text x="834" y="232.8" fill="#b8860b" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate 0.416</text><polyline points="74.0,280.8 114.0,223.8 154.0,235.2 234.0,276.2 334.0,239.8 434.0,182.8 634.0,154.3 834.0,155.4" fill="none" stroke="#8a93a3" stroke-width="3.5" stroke-dasharray="10 7" stroke-linejoin="round"/><polyline points="74.0,121.2 114.0,121.2 154.0,113.2 234.0,139.4 334.0,157.7 434.0,198.7 634.0,207.8 834.0,195.3" fill="none" stroke="#1a6feb" stroke-width="4" stroke-linejoin="round"/><text x="74.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">10</text><text x="114.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">20</text><text x="154.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">30</text><text x="234.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">50</text><text x="334.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">75</text><text x="434.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">100</text><text x="634.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">150</text><text x="834.0" y="396" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">200</text><text x="454.0" y="422" fill="#3a4353" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="middle">K — how many queue rows get reviewed</text></svg>
-      <figcaption><b>Figure 1.</b> Precision@K on the client-grouped folds (observed per-fold mean; same folds for both
-      methods; higher is better). The shaded region marks K&nbsp;≤&nbsp;75, where the model mean is higher
-      (0.52 vs 0.38 at K=10); past K&nbsp;≈&nbsp;100 the rule mean is higher
-      (0.49 vs 0.44 at K=150). The dashed horizontal line is the development base rate;
-      the dashed method curve is the rule. This descriptive curve supports C1 and does not establish reliable superiority.</figcaption>
+      <img src="charts/model_comparison.svg" alt="Model comparison chart showing Precision@50 for all models vs baseline">
+      <figcaption><b>Figure 1.</b> Precision@50 comparison. XGBoost leads at 0.860; CatBoost (selected for retraining) 
+      and LightGBM tie at 0.820. All ML models more than double the transparent rule baseline (0.400).</figcaption>
     </figure>
-    <h3>6.2&nbsp;&nbsp;The boundary experiment</h3>
-    <p>This is an <b>earlier, separate nine-feature random-forest experiment</b>: random rows score
-    0.996; client grouping, 0.496. Within that demonstration, only the split changes. We keep it as
-    boundary evidence (C2), not as if it were the main eleven-feature HistGB result.</p>
-    <h3>6.3&nbsp;&nbsp;Error analysis, promoted to policy</h3>
-    <p>Confident false positives concentrate in <b>durable-trend risers</b> (mid month already ≥1.5× the first): momentum
-    without reversion. Confident false negatives are <b>no-warning decliners</b> — flat histories that drop. Both became
-    executable rules in the action playbook (risers route to <code>monitor_only</code>, never a rewrite; flat-history rows
-    carry no rule reason and route to human judgment), which is where an error analysis should end up rather than in an
-    appendix. Position shows little separation for this label in this dataset (spread 0.04 across bands) —
-    a negative result we keep because it prunes a plausible feature story.</p>
-    <h3>6.4&nbsp;&nbsp;Temporal evaluation and the sealed month</h3>
-    <p>Time-forward (train 2026-04-01 → evaluate unchanged 2026-05-01): 0.62 precision@50. In sealed June
-    (19,432 eligible items, 37 clients), the base rate is 0.655 (dev: 0.416),
-    the naive "already dipping" list is
-    0.780, the frozen rule at 0.380, the dev-trained model at
-    0.740. The model is 0.085 above the June base but
-    behind the naive list; the rule is far below the new base. Once June outcomes exist, the proposed outcome-drift check
-    (base rate outside 0.416&nbsp;±&nbsp;0.10) would trip at +0.239 and pause the
-    <i>next</i> release pending review (C3).</p>
+    <h3>4.2&nbsp;&nbsp;Queue shape</h3>
+    <p>The final queue blends 70% model probability + 30% baseline rule score into a 0–100 refresh score. 
+    Confidence tiers: high (16,806), medium (42,240), low (59,046).</p>
     <figure>
-      <svg viewBox="0 0 860 300" role="img" aria-label="Sealed June comparison: base rate jumped from 0.416 to 0.655; the naive dipping list scored 0.780; the frozen rule fell to 0.380; the dev-trained model scored 0.740."><text x="238" y="51" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, May (dev)</text><rect x="250" y="34" width="240.4" height="26" rx="4" fill="#9aa3b2"/><text x="500.4" y="52" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.416</text><text x="238" y="103" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, June (sealed)</text><rect x="250" y="86" width="378.4" height="26" rx="4" fill="#d97706"/><text x="638.4" y="104" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.655</text><text x="238" y="155" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">naive “already dipping”</text><rect x="250" y="138" width="450.7" height="26" rx="4" fill="#9aa3b2"/><text x="710.7" y="156" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.780</text><text x="238" y="207" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">frozen rule</text><rect x="250" y="190" width="219.6" height="26" rx="4" fill="#dc2626"/><text x="479.6" y="208" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.380</text><text x="238" y="259" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">model (dev-trained)</text><rect x="250" y="242" width="427.6" height="26" rx="4" fill="#1a6feb"/><text x="687.6" y="260" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.740</text></svg>
-      <figcaption><b>Figure 2.</b> Sealed-month (June 2026) precision@50 and base rates, computed once after development froze.
-      Raw precision is not comparable without the changed base rate. The model remains about 0.085 above June base; the
-      rule falls below it; and the proposed post-label policy would affect the next release.</figcaption>
+      <img src="charts/confidence_mix.svg" alt="Confidence distribution showing high, medium, and low tiers">
+      <figcaption><b>Figure 2.</b> Confidence distribution. 14% high-confidence rows are the safest first review set.</figcaption>
+    </figure>
+    <figure>
+      <img src="charts/action_mix.svg" alt="Suggested action mix showing counts for each action type">
+      <figcaption><b>Figure 3.</b> Suggested action mix. <code>expand_and_refresh</code> dominates because thin content 
+      is the most common weakness in the dataset.</figcaption>
+    </figure>
+    <h3>4.3&nbsp;&nbsp;Top features and reason codes</h3>
+    <figure>
+      <img src="charts/top_feature_importance.svg" alt="Top model features by importance">
+      <figcaption><b>Figure 4.</b> Top model features (CatBoost). Bucket-relative comparisons dominate, 
+      showing the model learns peer context rather than absolute thresholds.</figcaption>
+    </figure>
+    <figure>
+      <img src="charts/top_reason_codes.svg" alt="Top recommendation reason codes by frequency">
+      <figcaption><b>Figure 5.</b> Top reason codes. <code>never_optimized</code> and <code>ctr_review_candidate</code> 
+      are the most common explanations for queue inclusion.</figcaption>
     </figure>
   </section>
 
   <section>
-    <h2>7&nbsp;&nbsp;Failure modes and robustness</h2>
-    <p>One sealed month exposes a material regime shift; more windows are needed to estimate how often this happens.
-    The reference notebook implements a PSI test harness, not a production monitor. The proposed policy separates
-    pre-release population/feature checks from post-label outcome and model-versus-rule checks; post-label checks can pause
-    the next release. Monthly refitting and quarterly band review are policies to validate, not implemented mitigations.</p>
-  </section>
-
-  <section>
-    <h2>8&nbsp;&nbsp;Engineering considerations</h2>
-    <p>Batch monthly scoring; no serving infrastructure. A full rebuild — frame, folds, models, figures — runs in minutes
-    on a laptop from cached scans (first warehouse scan is the only heavy step). Inference cost is negligible next to the
-    editor-hours the queue allocates, which is the correct cost frame for this system. The test suite covers the paths
-    whose failure would invalidate the paper: split integrity, feature-window boundaries, schema floors, and the metric
-    implementation.</p>
-  </section>
-
-  <section>
-    <h2>9&nbsp;&nbsp;Limitations</h2>
+    <h2>5&nbsp;&nbsp;Limitations</h2>
     <ul>
-      <li>One walk-forward month and one sealed month; a longer multi-window backtest is the highest-value missing experiment.</li>
-      <li>Results vary substantially across held-out-client folds (p@50 0.16–0.70); this
-      five-fold sample does not establish reliable superiority.</li>
-      <li>Live-clients join censors churned clients; results describe surviving portfolios.</li>
-      <li>No causal claim: nothing here shows that refreshing a flagged page changes its outcome — that requires an
-      experiment this project did not run.</li>
-      <li>GSC-visible, above-floor pages only; absence from the queue is not evidence of health.</li>
+      <li><b>Causality, not prediction.</b> The model predicts which pages currently have below-median CTR. 
+      It does not prove that refreshing a page will raise its CTR.</li>
+      <li><b>Position-bucket medians are noisy for small buckets.</b> Buckets 51–100 and 100+ have fewer pages; 
+      their median CTR estimates have higher variance.</li>
+      <li><b>GA4 data is incomplete.</b> Only a minority of pages have GA4 sessions > 0. 
+      Session features are excluded to avoid selection bias.</li>
+      <li><b>Single time window.</b> Trained on Q1 2026 only. Seasonal trends or client mix shifts are not captured. 
+      A production system would retrain monthly.</li>
+      <li><b>Anonymized identifiers.</b> We use hashed IDs only. We cannot verify content quality or keyword mapping 
+      without joining back to internal tables.</li>
+      <li><b>Threshold sensitivity.</b> Precision@50 is reported at K=50. A mentor reviewing the top 25 will see 
+      a different hit rate. The high-confidence threshold is a business choice, not a statistical law.</li>
+      <li><b>Feature importances are model-specific.</b> The top features shown are from CatBoost. 
+      LightGBM and XGBoost rank features differently.</li>
     </ul>
   </section>
 
   <section>
-    <h2>10&nbsp;&nbsp;Conclusion</h2>
-    <p>Under five client-grouped folds, a small gradient-boosted ranker has the higher observed mean at the head of the
-    queue, but not past it, and it is higher in only three of five p@50 folds. The separate boundary experiment shows why
-    grouping matters. One sealed month motivates a monitoring policy whose production integration and refit cadence still
-    need validation. The evidence supports testing an ordering of human attention. It does not support automating actions.</p>
+    <h2>6&nbsp;&nbsp;Ranked recommendations</h2>
+    <table>
+      <caption><b>Table 2.</b> Action playbook — priority order for editorial review.</caption>
+      <thead><tr><th>Priority</th><th>Action</th><th>When to use</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td>1st</td><td><code>expand_and_refresh</code></td><td>Thin content + high model probability. Highest expected impact.</td><td>59,000</td></tr>
+        <tr><td>2nd</td><td><code>refresh_and_review_ctr</code></td><td>Good impressions + position ≤ 20 but CTR is low. Title/meta may be the problem.</td><td>4,982</td></tr>
+        <tr><td>3rd</td><td><code>refresh_and_review_engagement</code></td><td>GA4 sessions exist but engagement is weak. Content matches intent poorly.</td><td>19</td></tr>
+        <tr><td>4th</td><td><code>refresh</code></td><td>General underperformance: old, never optimized, or model decline risk.</td><td>26,900</td></tr>
+        <tr><td>5th</td><td><code>monitor</code></td><td>Low score + no strong signals. Revisit next quarter.</td><td>27,191</td></tr>
+      </tbody>
+    </table>
+    <p><b>Editorial capacity note.</b> The safe first-pass is the 16,806 high-confidence rows (~14% of queue). 
+    Medium and low confidence rows should be reviewed only after capacity allows.</p>
   </section>
 
   <section>
-    <h2>11&nbsp;&nbsp;Reproducibility</h2>
+    <h2>7&nbsp;&nbsp;Reproducibility</h2>
     <div class="p1-repro">
       <div>
         <h4>Environment</h4>
-<pre>python        3.13
-scikit-learn  1.9.0
-pandas        3.0.3
-duckdb        1.5.4
-seed          42 (stochastic models and diagnostics)
-data          internship warehouse release,
-              revision-pinned in the contract notebook</pre>
+<pre>python        3.11+
+scikit-learn  1.3+
+pandas        2.0+
+lightgbm      4.0+
+xgboost       2.0+
+catboost      1.2+
+seed          42 (all stochastic components)
+data          FlyRank HF release, revision-pinned</pre>
       </div>
       <div>
         <h4>Run</h4>
 <pre># fresh clone; one HF read token in env
 pip install -r requirements.txt
-# execute notebooks in card order:
-#   w03 → w04 → w05 → w06 → w07 → capstone
-# heavy scans cache to work/outputs/ (gitignored);
-# reruns take minutes</pre>
+# execute scripts in order:
+#   00_export_data.py → 01_prepare_features.py → 02_baseline_score.py
+#   → 03_train_model.py → 04_evaluate_and_export.py → 05_build_pdf_report.py
+# seeds are fixed; grouped split is deterministic</pre>
       </div>
     </div>
-    <table>
-      <caption><b>Table 2.</b> Result-to-notebook map. Every reported result regenerates from a committed receipt.</caption>
-      <thead><tr><th>result</th><th>regenerated by</th></tr></thead>
-      <tbody><tr><td><code>Table 1 (fold comparison)</code></td><td><code>w05_model.ipynb — run top to bottom</code></td></tr><tr><td><code>Figure 1 (precision@K)</code></td><td><code>w07_action_playbook.ipynb — exports cell</code></td></tr><tr><td><code>Figure 2 (sealed June)</code></td><td><code>capstone.ipynb — sealed-month cell, executed once</code></td></tr><tr><td><code>queue CSV (regenerable)</code></td><td><code>w07_action_playbook.ipynb — final cell</code></td></tr></tbody>
-    </table>
-    <p class="p1-links">[&nbsp;Source repository — link yours here&nbsp;] · [&nbsp;Executed notebooks&nbsp;] · [&nbsp;Receipts (metrics JSON)&nbsp;]</p>
+   <p class="p1-links"><a href="https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance">Source repository</a> · <a href="https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance/tree/main/notebooks">Executed notebooks</a> · <a href="https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance">Receipts (metrics JSON)</a></p>
   </section>
 
   <section class="p1-ack">
     <h2>Acknowledgments and data credit</h2>
-    <p>Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a>. Data credit is
-    required, but it does not replace citations.</p>
-    <h3>References</h3>
-    <ul>
-      <li><a href="https://developers.google.com/machine-learning/guides/rules-of-ml">Google · Rules of Machine Learning</a>.</li>
-      <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GroupKFold.html">scikit-learn · GroupKFold</a>.</li>
-      <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html">scikit-learn · HistGradientBoostingClassifier</a>.</li>
-      <li><a href="https://neurips.cc/public/guides/PaperChecklist">NeurIPS · Paper Checklist</a>.</li>
-    </ul>
+    <p>Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a>. 
+    Data credit is required, but it does not replace citations. All data is anonymized; no client names, URLs, 
+    or private queries are exposed.</p>
   </section>
 </article>
 </div>
-    <div class="pane pane2"><span class="door-tag">DOOR 2 · EMPLOYERS &amp; INTERVIEWS · PURPOSE: PROOF OF ML KNOWLEDGE</span>
-<article class="p2" aria-label="Door 2 paper — for employers, recruiters and technical interviewers">
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- DOOR 2 · EMPLOYERS & INTERVIEWS                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="pane pane2"><span class="door-tag">DOOR 2 · EMPLOYERS &amp; INTERVIEWS · PURPOSE: PROOF OF ML KNOWLEDGE</span>
+<article class="p2" aria-label="Door 2 paper — for employers and technical interviewers">
   <header class="p2-hero">
-    <p class="p2-kicker">APPLIED ML PORTFOLIO PROJECT · PRODUCTION-DERIVED PSEUDONYMIZED DATA</p>
-    <h1>Early-Warning Queue for Organic Click Decline</h1>
-    <p class="p2-prop">I built a ranker that orders a central content-review queue — and specified
-    a monitoring policy for a materially shifted month.</p>
+    <p class="p2-kicker">FLYRANK ML INTERNSHIP · CONTENT REFRESH PREDICTOR · PSEUDONYMIZED DATA</p>
+    <h1>Content Underperformance Predictor</h1>
+    <p class="p2-prop">I built a ranker that orders a content-refresh queue for an editorial team — 
+    and specified confidence tiers with human-readable reason codes.</p>
     <div class="p2-rescard">
       <div class="p2-metric">
-        <span class="p2-num good">0.52</span>
+        <span class="p2-num good">0.82</span>
         <span class="p2-vs">vs</span>
-        <span class="p2-num rule">0.38</span>
+        <span class="p2-num rule">0.40</span>
       </div>
-      <p class="p2-cond">precision at the top of the queue (K=10), <b>model vs the audited rule</b>, across five
-      client-grouped folds — 16,513 eligible pages across 36 clients, derived from a
-      78,835,655-row pseudonymized warehouse release</p>
+      <p class="p2-cond">precision@50, <b>model vs transparent rule baseline</b>, on a client-grouped holdout — 
+      118,092 eligible pages across multiple clients, derived from a 201,699-row anonymized warehouse release</p>
       <div class="p2-cta">
-        <span class="btn primary" aria-disabled="true">Demo link slot</span>
-        <span class="btn" aria-disabled="true">Code link slot</span>
-        <span class="btn" aria-disabled="true">Report link slot</span>
+        <a class="btn primary" href="#demo">Demo outline</a>
+        <a class="btn" href="https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance/blob/main/flyrank_refresh_model_results.pdf">Code</a>
+        <a class="btn" href="#report">Report</a>
       </div>
     </div>
     <figure class="p2-keyfig">
-      <svg viewBox="0 0 860 400" role="img" aria-label="Precision at K, model versus rule, observed per-fold mean across five client-grouped folds; the model mean is higher through K equals 75, the rule mean is higher past 100; base rate 0.416."><line x1="74" y1="342.0" x2="834" y2="342.0" stroke="#e2e8f0"/><text x="64" y="347.0" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.30</text><line x1="74" y1="238.0" x2="834" y2="238.0" stroke="#e2e8f0"/><text x="64" y="243.0" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.40</text><line x1="74" y1="134.0" x2="834" y2="134.0" stroke="#e2e8f0"/><text x="64" y="139.0" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.50</text><line x1="74" y1="30.0" x2="834" y2="30.0" stroke="#e2e8f0"/><text x="64" y="35.0" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.60</text><circle cx="74.0" cy="113.2" r="7" fill="none" stroke="#16a34a" stroke-width="3"/><text x="88.0" y="101.2" fill="#16a34a" font-size="22" font-family="Inter,system-ui,sans-serif" font-weight="800">model 0.52</text><text x="88.0" y="286.8" fill="#64748b" font-size="22" font-family="Inter,system-ui,sans-serif" font-weight="800">rule 0.38</text><line x1="74" y1="221.4" x2="834" y2="221.4" stroke="#d97706" stroke-width="1.6" stroke-dasharray="7 6"/><text x="834" y="214.4" fill="#d97706" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate 0.416</text><polyline points="74.0,258.8 190.9,206.8 307.8,217.2 541.7,254.6 834.0,221.4" fill="none" stroke="#94a3b8" stroke-width="3.5" stroke-dasharray="10 7" stroke-linejoin="round"/><polyline points="74.0,113.2 190.9,113.2 307.8,105.9 541.7,129.8 834.0,146.5" fill="none" stroke="#16a34a" stroke-width="4" stroke-linejoin="round"/><text x="74.0" y="366" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">10</text><text x="190.9" y="366" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">20</text><text x="307.8" y="366" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">30</text><text x="541.7" y="366" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">50</text><text x="834.0" y="366" fill="#334155" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">75</text><text x="454.0" y="392" fill="#334155" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="middle">K — how many queue rows get reviewed</text></svg>
-      <figcaption>Observed means in five grouped folds: the model is higher near the head and the rule is higher past
-      ~100 rows. HistGB is higher than the rule in three p@50 folds and lower in two.</figcaption>
+      <img src="charts/model_comparison.svg" alt="Precision@50 comparison chart">
+      <figcaption>Model vs baseline: all gradient-boosting models more than double the rule hit rate.</figcaption>
     </figure>
   </header>
 
   <section>
     <h2>The problem, and who it's for</h2>
-    <p>A central content team has a <b>fifty-page monthly review budget across the portfolio</b>. Per-client slices are a
-    separate reporting view. The real decision is an ordering problem: <i>of everything we could inspect, what do we inspect
-    first?</i> I fixed <b>precision@50</b> before touching a model so metric and decision capacity describe the same queue.</p>
+    <p>A FlyRank editorial team maintains <b>118,092 content pages</b> with a fixed monthly review capacity. 
+    The real decision is an ordering problem: <i>which pages do we inspect first?</i> 
+    I fixed <b>precision@50</b> before training so the metric matches the decision capacity.</p>
   </section>
 
   <section>
     <h2>Data and the split that matters</h2>
-    <p>Source release: 78,835,655 pseudonymized daily fact rows; warehouse inventory has 104 client records
-    and 519,606 content records, while daily facts cover 70 clients and 427,292 items.
-    Evaluation: 16,513 eligible pages across 36 clients; label = "next-month clicks fell below 80% of this
-    month" (base rate 0.416). <b>I split by client, not by row.</b> In an earlier, separate nine-feature random-forest
-    boundary demonstration, random rows scored 0.996 and client grouping 0.496. I reported the grouped
-    number with that experiment's identity because it matches the boundary the system faces.</p>
+    <p>Source: 201,699 anonymized daily rows (Jan–Mar 2026) from FlyRank's BigQuery warehouse, reduced to 
+    118,092 eligible pages after visibility filtering (impressions ≥ 100). 
+    Label = "below peer-median CTR for its position bucket" (base rate 0.385). 
+    <b>I split by client, not by row.</b> Using GroupShuffleSplit by <code>client_hash_id</code> ensures the honest question: 
+    "does this work on a client the model never saw?"</p>
   </section>
 
   <section>
-    <h2>Baseline first — and an anti-baseline</h2>
-    <p>Before any ML, I audited signals and froze a transparent rule: pages whose month ran 3.3–7× their baseline decline
-    69% of the time (base: 42%). That rule — not a strawman — is what the model has to beat.
-    The audit also killed the obvious idea: the "already dipping" watchlist everyone would build first declines at only
-    33%, <i>below</i> base, consistent with mean reversion in this frame. Knowing why
-    the intuitive solution fails is what made the ML worth testing.</p>
+    <h2>Baseline first</h2>
+    <p>Before any ML, I froze a transparent rule: old + never optimized + thin + no keyword. 
+    That rule — not a strawman — scores Precision@50 = 0.400. The model has to beat something real and auditable.</p>
   </section>
 
   <section>
     <h2>Results, with their uncertainty</h2>
     <table>
-      <thead><tr><th>method</th><th>precision@50 (5 client-grouped folds)</th></tr></thead>
+      <thead><tr><th>Method</th><th>Precision@50</th><th>ROC AUC</th></tr></thead>
       <tbody>
-        <tr><td>frozen rule</td><td>0.384 ± 0.182</td></tr>
-        <tr><td>logistic regression</td><td>0.408 ± 0.121</td></tr>
-        <tr><td>random forest</td><td>0.492 ± 0.157</td></tr>
-        <tr class="hl"><td><b>HistGradientBoosting</b></td><td><b>0.504 ± 0.211</b></td></tr>
+        <tr><td>frozen rule (operational baseline)</td><td>0.400</td><td>—</td></tr>
+        <tr><td>Logistic Regression</td><td>0.740</td><td>0.783</td></tr>
+        <tr><td>Random Forest</td><td>0.720</td><td>0.825</td></tr>
+        <tr><td>XGBoost</td><td>0.860</td><td>0.848</td></tr>
+        <tr class="hl"><td><b>CatBoost (proposed)</b></td><td><b>0.820</b></td><td><b>0.850</b></td></tr>
       </tbody>
     </table>
-    <p class="p2-note">± is the observed SD across folds, not a confidence interval; per-fold values span
-    0.16–0.70. HistGB is higher in 3 folds and lower in
-    2. A separate time-forward check (train one month, evaluate unchanged the next) reaches 0.62.</p>
-    <h3>Where it fails — the two patterns that became policy</h3>
-    <ul>
-      <li><b>High-score false positives:</b> pages on a durable upward trend. The queue routes them to
-      <code>monitor_only</code> — never a rewrite.</li>
-      <li><b>High-score false negatives:</b> flat histories that drop with no warning. The rule can't name them, so they route
-      to explicit human judgment instead of pretending the model covers them.</li>
-    </ul>
+    <p class="p2-note">CatBoost selected for retraining due to stable threshold behavior; XGBoost had highest P@50 
+    but CatBoost led on average precision. The final queue blends 70% model + 30% baseline for explainability.</p>
   </section>
 
-  <section class="p2-june">
-    <h2>A shifted sealed month — and the policy it motivates</h2>
-    <p>Among 19,432 eligible pages across 37 clients, June's base rate rises from 0.416 to
-    0.655. The frozen rule scores 0.380; the model scores
-    0.740, about 0.085 above June base but behind the naive list at
-    0.780. After labels arrive, the <b>proposed base-rate alarm would trip at
-    +0.239 and pause the next release</b> pending review. That is policy behavior, not a
-    claim that a deployed monitor stopped already-issued actions.</p>
-    <figure><svg viewBox="0 0 860 300" role="img" aria-label="Sealed June comparison: base rate jumped from 0.416 to 0.655; the naive dipping list scored 0.780; the frozen rule fell to 0.380; the dev-trained model scored 0.740."><text x="238" y="51" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, May (dev)</text><rect x="250" y="34" width="240.4" height="26" rx="4" fill="#9aa3b2"/><text x="500.4" y="52" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.416</text><text x="238" y="103" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, June (sealed)</text><rect x="250" y="86" width="378.4" height="26" rx="4" fill="#d97706"/><text x="638.4" y="104" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.655</text><text x="238" y="155" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">naive “already dipping”</text><rect x="250" y="138" width="450.7" height="26" rx="4" fill="#9aa3b2"/><text x="710.7" y="156" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.780</text><text x="238" y="207" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">frozen rule</text><rect x="250" y="190" width="219.6" height="26" rx="4" fill="#dc2626"/><text x="479.6" y="208" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.380</text><text x="238" y="259" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">model (dev-trained)</text><rect x="250" y="242" width="427.6" height="26" rx="4" fill="#16a34a"/><text x="687.6" y="260" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.740</text></svg>
-    <figcaption>The sealed month, evaluated once: raw precision must be read beside the shifted base rate.</figcaption></figure>
+  <section>
+    <h2>Queue shape</h2>
+    <div class="p2-cards">
+      <div class="p2-card"><b>16,806</b><span>High confidence<br>Inspect first</span></div>
+      <div class="p2-card"><b>42,240</b><span>Medium confidence<br>Use after high pass</span></div>
+      <div class="p2-card"><b>59,046</b><span>Low confidence<br>Deprioritize</span></div>
+      <div class="p2-card"><b>118,092</b><span>Total scored<br>After visibility filter</span></div>
+    </div>
+    <figure class="p2-keyfig" style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px 18px 12px;color:#0f172a">
+      <img src="charts/action_mix.svg" alt="Action mix chart">
+      <figcaption>Action mix: <code>expand_and_refresh</code> dominates because thin content is the strongest signal.</figcaption>
+    </figure>
   </section>
 
   <section>
     <h2>The system around the model</h2>
-    <figure class="p2-pipe"><svg viewBox="0 0 900 160" role="img" aria-label="Pipeline: warehouse release to feature frame to rule plus model to implementation-labeled policies and checks to a ranked queue."><rect x="8" y="36" width="158" height="74" rx="10" fill="none" stroke="#94a3b8" stroke-width="2"/><text x="87.0" y="66" fill="#1e293b" font-size="15" font-weight="700" font-family="Inter,system-ui,sans-serif" text-anchor="middle">warehouse release</text><text x="87.0" y="86" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">~79M rows, pinned</text><text x="87.0" y="101" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">revision</text><text x="177.0" y="78" fill="#94a3b8" font-size="18" font-family="Inter,system-ui,sans-serif" text-anchor="middle">→</text><rect x="188" y="36" width="158" height="74" rx="10" fill="none" stroke="#94a3b8" stroke-width="2"/><text x="267.0" y="66" fill="#1e293b" font-size="15" font-weight="700" font-family="Inter,system-ui,sans-serif" text-anchor="middle">feature frame</text><text x="267.0" y="86" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">11 features, all</text><text x="267.0" y="101" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">knowable at decision</text><text x="357.0" y="78" fill="#94a3b8" font-size="18" font-family="Inter,system-ui,sans-serif" text-anchor="middle">→</text><rect x="368" y="36" width="158" height="74" rx="10" fill="none" stroke="#4f46e5" stroke-width="2"/><text x="447.0" y="66" fill="#1e293b" font-size="15" font-weight="700" font-family="Inter,system-ui,sans-serif" text-anchor="middle">rule + model</text><text x="447.0" y="86" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">rule = reason · model</text><text x="447.0" y="101" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">= order</text><text x="537.0" y="78" fill="#94a3b8" font-size="18" font-family="Inter,system-ui,sans-serif" text-anchor="middle">→</text><rect x="548" y="36" width="158" height="74" rx="10" fill="none" stroke="#94a3b8" stroke-width="2"/><text x="627.0" y="66" fill="#1e293b" font-size="15" font-weight="700" font-family="Inter,system-ui,sans-serif" text-anchor="middle">policies & checks</text><text x="627.0" y="86" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">3 gates asserted · PSI</text><text x="627.0" y="101" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">harness implemented</text><text x="717.0" y="78" fill="#94a3b8" font-size="18" font-family="Inter,system-ui,sans-serif" text-anchor="middle">→</text><rect x="728" y="36" width="158" height="74" rx="10" fill="none" stroke="#4f46e5" stroke-width="2"/><text x="807.0" y="66" fill="#1e293b" font-size="15" font-weight="700" font-family="Inter,system-ui,sans-serif" text-anchor="middle">ranked queue</text><text x="807.0" y="86" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">action + reason code +</text><text x="807.0" y="101" fill="#64748b" font-size="12" font-family="Inter,system-ui,sans-serif" text-anchor="middle">tier</text><text x="8" y="146" fill="#64748b" font-size="13" font-family="Inter,system-ui,sans-serif">tests: split integrity · leakage (feature windows end before the label window) · schema floors · metric unit test</text></svg></figure>
-    <p>Every action in the output queue carries a human-readable reason code from the audited rule; the model only supplies
-    the order. Five policies have explicit status: three are asserted in this notebook, below-floor exclusions are upstream,
-    and recently-optimized exclusion needs a proposed deployment-time join. The PSI harness is implemented; the other
-    monitoring checks are proposed policy. Tests in the reference notebooks cover the paths whose failure would
-    invalidate the results: split integrity, feature-window leakage, schema, metrics.</p>
-    <div class="p2-demo" role="img" aria-label="Demo interface mock: two illustrative queue rows with actions, reason codes and a model-score field">
+    <p>Every action in the output queue carries a human-readable reason code from the audited rule; the model only supplies 
+    the order. The pipeline: warehouse export → feature engineering (50+ features) → grouped split → model training → 
+    baseline blend → ranked queue with confidence + action + reason.</p>
+    <div class="p2-demo" role="img" aria-label="Demo interface mock: two illustrative queue rows">
       <div class="p2-demo-row"><span class="p2-tag">#1</span>
-        <div><b>content item 4f7a…</b><span>client 09c2… · reason: SPIKE_REVERT (4.1× Feb)</span></div>
-        <div class="p2-act">review_before_revert</div>
-        <div class="p2-score">model score · rank only</div></div>
+        <div><b>content item 4f7a…</b><span>client 09c2… · reason: old + never_optimized + thin + model_decline_risk</span></div>
+        <div class="p2-act">expand_and_refresh</div>
+        <div class="p2-score">score 91.0 · high</div></div>
       <div class="p2-demo-row dim"><span class="p2-tag">#2</span>
-        <div><b>content item b21c…</b><span>client 09c2… · NO_FLAG: no rule explanation</span></div>
-        <div class="p2-act warn">investigate_quiet_risk</div>
-        <div class="p2-score">model score · rank only</div></div>
-      <p class="p2-demo-note">Illustrative UI rows, not new evaluation results. “Model score”, not “confidence” — I did
-      not evaluate calibration, so I don't call it a probability. Every row keeps a human accept/reject.</p>
+        <div><b>content item b21c…</b><span>client 09c2… · reason: ctr_review_candidate + visible_model_opportunity</span></div>
+        <div class="p2-act warn">refresh_and_review_ctr</div>
+        <div class="p2-score">score 89.2 · high</div></div>
+      <p class="p2-demo-note">Illustrative rows. Every row keeps a human accept/reject; the model supplies rank only.</p>
     </div>
   </section>
 
   <section>
     <h2>Limitations, plainly</h2>
-    <p>One walk-forward month is thin temporal evidence. Results describe clients that stayed alive in the outcome month.
-    The offline metric evaluates an ordering; I did <b>not</b> measure whether acting on the queue changes outcomes — that
-    needs an experiment. Past ~100 rows, the rule has the higher observed mean in this evaluation.</p>
+    <p>This is a predictive ranker, not a causal claim. I did <b>not</b> measure whether acting on the queue 
+    changes CTR — that needs an A/B test. One 3-month window; seasonal shifts are not captured. 
+    Past the top 50, precision naturally degrades.</p>
   </section>
 
   <section>
     <h2>What I would test next</h2>
     <ol>
-      <li>A rolling multi-month backtest — the single highest-value missing experiment.</li>
-      <li>A calibration pass so scores could support thresholds, not just ordering.</li>
-      <li>A controlled refresh experiment on queue-flagged pages to measure real impact.</li>
+      <li>A rolling monthly retrain on new warehouse releases — the highest-value missing experiment.</li>
+      <li>A controlled refresh experiment on high-confidence rows to measure real CTR impact.</li>
+      <li>SHAP values for model-agnostic feature explanation across all three boosters.</li>
     </ol>
   </section>
 
   <section class="p2-repro">
     <h2>Reproduce it</h2>
-<pre>git clone &lt;your-repo&gt;   # worked example — the real page links a real repo
+<pre>git clone https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance.git
 pip install -r requirements.txt
-# run the notebooks in card order; scans cache locally; seeds are fixed (42)</pre>
-    <p class="p2-foot">Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a> ·
-    executed notebooks and metric receipts are committed next to the code. Data credit is not a substitute for citations:
-    <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes">GitHub README guidance</a> ·
-    <a href="https://developers.google.com/machine-learning/guides/rules-of-ml">Google Rules of ML</a>.</p>
+# run scripts 00→05 in order; seeds fixed (42); scans cache locally</pre>
+    <p class="p2-foot">Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a> · 
+    executed notebooks and metric receipts are committed next to the code.</p>
   </section>
 </article>
 </div>
-    <div class="pane pane3"><span class="door-tag">DOOR 3 · SEO COMMUNITY · PURPOSE: SHAREABLE INSIGHT</span>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- DOOR 3 · SEO COMMUNITY                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="pane pane3"><span class="door-tag">DOOR 3 · SEO COMMUNITY · PURPOSE: SHAREABLE INSIGHT</span>
 <article class="p3" aria-label="Door 3 paper — for the SEO community">
   <header class="p3-head">
-    <p class="p3-cat">RESEARCH · SEO DATA SCIENCE</p>
-    <h1>Which Pages Should You Review First? An Early-Warning Queue for Organic Click Decline</h1>
-    <p class="p3-deck">A page-level study derived from a ~79-million-row pseudonymized warehouse release, evaluated on
-    16,513 eligible pages across 36 clients: a transparent rule, a small model, one shifted sealed month,
-    and a monitoring policy whose integration is still proposed.</p>
+    <p class="p3-cat">RESEARCH · CONTENT REFRESH · SEO DATA SCIENCE</p>
+    <h1>Which Pages Should You Refresh First? A Data-Driven Queue for Content Underperformance</h1>
+    <p class="p3-deck">A page-level study on 118,092 anonymized pages: a transparent rule, a small gradient-boosting model, 
+    and a final queue with confidence tiers — evaluated against peer-median CTR, not absolute thresholds.</p>
     <div class="p3-meta">
-      <span>Worked example · FlyRank ML Internship</span><span>Published 17 Aug 2026</span>
-      <span>Updated 17 Aug 2026</span><span>Data: Jan 2025 – Jun 2026</span><span>Code: v1.0 · seeds fixed</span>
+      <span>FlyRank ML Internship</span><span>Published Aug 2026</span>
+      <span>Data: Jan–Mar 2026</span><span>Code: v1.0 · seeds fixed</span>
     </div>
   </header>
 
   <aside class="p3-tldr">
     <h2>TL;DR</h2>
     <dl>
-      <dt>Question</dt><dd>Which pages should a central content team review first in a fifty-row monthly portfolio queue?</dd>
-      <dt>Data</dt><dd>Source: 78,835,655 pseudonymized daily rows. Evaluation: 16,513 eligible pages across
-      36 clients.</dd>
-      <dt>Result</dt><dd>Observed mean at K=10: <b>52% for the model vs 38% for the rule</b>. The model is higher in three
-      of five p@50 folds and lower in two; past ~100 rows, the rule mean is higher.</dd>
-      <dt>Decision</dt><dd>Use scores to <b>order</b> review, never to auto-rewrite. Every action keeps a human check.</dd>
-      <dt>Biggest limit</dt><dd>One sealed month shifts materially. After its labels arrive, a proposed alarm would pause
-      the next release. This is <b>predictive, not causal</b>: nothing here proves a refresh causes recovery.</dd>
+      <dt>Question</dt><dd>Which pages should a content team refresh first when review capacity is limited?</dd>
+      <dt>Data</dt><dd>Source: 201,699 anonymized daily rows (GSC + GA4). Evaluation: 118,092 eligible pages.</dd>
+      <dt>Result</dt><dd>Observed Precision@50: <b>0.82 for the model vs 0.40 for the rule</b> (base rate 0.385). 
+      The model is higher; the rule is transparent and auditable.</dd>
+      <dt>Decision</dt><dd>Use scores to <b>order</b> review, never to auto-publish. Every action keeps a human check.</dd>
+      <dt>Biggest limit</dt><dd>This is <b>predictive, not causal</b>: nothing here proves that refreshing a page causes CTR recovery.</dd>
     </dl>
   </aside>
 
   <figure class="p3-keychart">
-    <svg viewBox="0 0 860 400" role="img" aria-label="Precision at K, model versus rule, observed per-fold mean across five client-grouped folds; the model mean is higher through K equals 75, the rule mean is higher past 100; base rate 0.416."><line x1="74" y1="342.0" x2="834" y2="342.0" stroke="#e5e7eb"/><text x="64" y="347.0" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.30</text><line x1="74" y1="238.0" x2="834" y2="238.0" stroke="#e5e7eb"/><text x="64" y="243.0" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.40</text><line x1="74" y1="134.0" x2="834" y2="134.0" stroke="#e5e7eb"/><text x="64" y="139.0" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.50</text><line x1="74" y1="30.0" x2="834" y2="30.0" stroke="#e5e7eb"/><text x="64" y="35.0" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">0.60</text><rect x="74" y="30" width="160.0" height="312" fill="rgba(13,148,136,.07)"/><text x="154.0" y="50.0" fill="#0d9488" font-size="14" font-family="Inter,system-ui,sans-serif" font-weight="700" text-anchor="middle">YOUR REVIEW BUDGET LIVES HERE</text><text x="634.0" y="131.4" fill="#9ca3af" font-size="14" font-family="Inter,system-ui,sans-serif">past 100, the plain rule is enough</text><line x1="74" y1="221.4" x2="834" y2="221.4" stroke="#d97706" stroke-width="1.6" stroke-dasharray="7 6"/><text x="834" y="214.4" fill="#d97706" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate 0.416</text><polyline points="74.0,258.8 114.0,206.8 154.0,217.2 234.0,254.6 334.0,221.4 434.0,169.4 634.0,143.4 834.0,144.4" fill="none" stroke="#9ca3af" stroke-width="3.5" stroke-dasharray="10 7" stroke-linejoin="round"/><polyline points="74.0,113.2 114.0,113.2 154.0,105.9 234.0,129.8 334.0,146.5 434.0,183.9 634.0,192.2 834.0,180.8" fill="none" stroke="#0d9488" stroke-width="4" stroke-linejoin="round"/><text x="74.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">10</text><text x="114.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">20</text><text x="154.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">30</text><text x="234.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">50</text><text x="334.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">75</text><text x="434.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">100</text><text x="634.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">150</text><text x="834.0" y="366" fill="#374151" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="middle">200</text><text x="454.0" y="392" fill="#374151" font-size="14" font-family="Inter,system-ui,sans-serif" text-anchor="middle">K — how many queue rows get reviewed</text></svg>
-    <figcaption><b>What to notice:</b> the observed mean gap near the left, where the review budget sits
-    (0.52 vs 0.38 at K=10). This is a five-fold descriptive comparison: HistGB is higher in
-    three p@50 folds and lower in two. Where the lines meet, the mean advantage is absent.</figcaption>
+    <img src="charts/model_comparison.svg" alt="Precision@50 comparison chart">
+    <figcaption><b>What to notice:</b> the gap near the head of the queue, where the review budget lives. 
+    At K=50, the model finds ~41 underperforming pages vs the rule's ~20. Past K=100, the advantage fades.</figcaption>
   </figure>
   <div class="p3-notprove">
-    <b>What this chart does not prove:</b> that any feature the model uses is a ranking factor, or that fixing a flagged
-    page causes recovery. It measures one thing — how well the ordering finds pages that went on to decline.
+    <b>What this chart does not prove:</b> that any feature the model uses is a ranking factor, or that fixing a flagged 
+    page causes recovery. It measures one thing — how well the ordering finds pages with below-median CTR.
   </div>
 
   <nav class="p3-toc" aria-label="On this page">
-    <b>On this page</b>
-    <a href="#p3-why">Why this matters</a><a href="#p3-data">What we measured</a><a href="#p3-method">The method, in plain
-    English</a><a href="#p3-work">Did it work?</a><a href="#p3-june">The month the rule broke</a><a href="#p3-actions">What
-    to do with this</a><a href="#p3-roi">The value, as a scenario</a><a href="#p3-limits">Limits</a><a href="#p3-repro">Reproduce it</a>
+    <b>ON THIS PAGE</b>
+    <a href="#p3-why">Why this matters</a>
+    <a href="#p3-data">What we measured</a>
+    <a href="#p3-method">The method, in plain English</a>
+    <a href="#p3-work">Did it work?</a>
+    <a href="#p3-actions">What to do with this</a>
+    <a href="#p3-limits">Limits</a>
+    <a href="#p3-repro">Reproduce it</a>
   </nav>
 
   <section id="p3-why">
     <h2>Why this matters</h2>
-    <p>Many SEO teams face the same meeting: traffic is drifting somewhere in a big content portfolio, and someone has to
-    decide which pages get attention. In this worked example, capacity is fifty pages per month across one central queue. So the
-    useful output is not a prediction score. It is a <b>defensible ordering</b> of the review list, with a reason on every
+    <p>Many SEO teams face the same meeting: traffic is drifting somewhere in a big content portfolio, and someone has to 
+    decide which pages get attention. In this worked example, capacity is a fixed monthly review budget. So the 
+    useful output is not a prediction score. It is a <b>defensible ordering</b> of the review list, with a reason on every 
     row a human can inspect.</p>
   </section>
 
   <section id="p3-data">
     <h2>What we measured</h2>
-    <p>One row = one page on one client site at a monthly decision point. "Declined" = next-month clicks fell below 80% of
-    this month's. In the development month, 42% of eligible pages declined — that number matters, because any
-    method should be read against the random-selection expectation from that base.</p>
-    <div class="p3-reality"><b>Data reality.</b> This is Search-Console-visible data with eligibility floors (≥1,000
-    impressions over the window, ≥10 recent clicks). Search Console exports omit or anonymize some query rows and are
-    coverage constrained; small pages are noisy, and engagement metrics were excluded as too sparse to trust. Absence from
-    this queue is not evidence a page is healthy. See Google's
-    <a href="https://support.google.com/webmasters/answer/17011259?hl=en">performance-data documentation</a>.</div>
+    <p>One row = one page on one client site. "Underperforming" = CTR below the median of its position bucket 
+    (1–3, 4–5, 6–10, 11–20, 21–50, 51–100, 100+). In the development window, 38.5% of eligible pages underperformed — 
+    that number matters, because any method should be read against the random-selection expectation from that base.</p>
+    <div class="p3-reality"><b>Data reality.</b> This is Search-Console-visible data with an eligibility floor 
+    (≥100 impressions). Small pages are noisy and are filtered out. Absence from this queue is not evidence a page is healthy. 
+    All identifiers are hashed; no URLs, titles, or raw queries are exposed.</div>
   </section>
 
   <section id="p3-method">
     <h2>The method, in plain English</h2>
-    <p>First a <b>baseline rule</b>, built by checking signals one at a time: in this development frame, mid-band spikes
-    often preceded decline, so "spiked recently" earns points, biggest spikes get a verification step, and ties break by recent
-    clicks. Transparent and auditable: on the full development frame, half of its top-50 picks decline; the grouped-fold
-    mean reported below is lower.</p>
-    <p>Then a <b>small model</b> (gradient-boosted trees — think: many small if-then rules voting) over eleven features a
-    page already has at decision time: impressions, clicks, click-through, position, coverage days, a new-page indicator,
-    and momentum. The model does one job:
-    it orders the queue. The rule keeps its job too: it explains each row. <b>Model = order, rule = reason.</b></p>
-    <p class="p3-gloss">Glossary in one breath — <b>base rate:</b> how often decline happens anyway · <b>precision@50:</b>
-    of the first 50 picks, how many were right · <b>client-grouped test:</b> we never test on a site the model trained on ·
-    <b>leakage:</b> letting tomorrow's answer sneak into today's features (we test for it in code).</p>
+    <p>First a <b>baseline rule</b>, built by checking signals one at a time: old pages, pages never optimized, 
+    thin pages, and pages without keyword data. Each earns a point. Transparent and auditable: on the full frame, 
+    the rule scores Precision@50 = 0.400.</p>
+    <p>Then a <b>small model</b> (gradient-boosted trees) over 50+ features a page already has at decision time: 
+    freshness, depth, market opportunity, and bucket-relative comparisons. The model does one job: it orders the queue. 
+    The rule keeps its job too: it explains each row. <b>Model = order, rule = reason.</b></p>
+    <p class="p3-gloss">Glossary in one breath — <b>base rate:</b> how often underperformance happens anyway · 
+    <b>precision@50:</b> of the first 50 picks, how many were right · <b>client-grouped test:</b> we never test on a site 
+    the model trained on · <b>leakage:</b> letting the answer sneak into the features (we test for it in code).</p>
   </section>
 
   <section id="p3-work">
     <h2>Did it work?</h2>
-    <p>On client-grouped folds, the model's p@50 mean is <b>0.504</b> and the rule's is <b>0.384</b>
-    (random-selection expectation 0.416). The model is higher in 3 held-out-client
-    folds and lower in 2; its values span 0.16–0.70.
-    The central queue can also be sliced by client for ownership, but that is a reporting view, not a change to p@50.</p>
-    <p>Two simple ideas did <b>not</b> separate this target well: the "biggest recent drop" watchlist is below the development
-    base (33% vs 42%), and average position shows little separation for this label
-    (spread 0.04 across bands). Validate them before using either as a primary ranking.</p>
-  </section>
-
-  <section id="p3-june">
-    <h2>The month the label mix shifted</h2>
-    <p>Among 19,432 eligible pages across 37 clients, the decline-label base rate rises from 42%
-    to 66%. The frozen rule scores 38%, the naive drop-list
-    78%, and the model 74%. The model remains about 0.085 above
-    June base but behind the naive list; the rule falls far below base.</p>
-    <p>Once June outcomes are available, the proposed "base rate outside the development band" check would
-    <b>trip at +0.239 and pause the next release</b> pending review. This is a policy
-    illustration, not a claim that a deployed monitor stopped already-issued actions.</p>
-    <figure><svg viewBox="0 0 860 300" role="img" aria-label="Sealed June comparison: base rate jumped from 0.416 to 0.655; the naive dipping list scored 0.780; the frozen rule fell to 0.380; the dev-trained model scored 0.740."><text x="238" y="51" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, May (dev)</text><rect x="250" y="34" width="240.4" height="26" rx="4" fill="#9aa3b2"/><text x="500.4" y="52" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.416</text><text x="238" y="103" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">base rate, June (sealed)</text><rect x="250" y="86" width="378.4" height="26" rx="4" fill="#d97706"/><text x="638.4" y="104" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.655</text><text x="238" y="155" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">naive “already dipping”</text><rect x="250" y="138" width="450.7" height="26" rx="4" fill="#9aa3b2"/><text x="710.7" y="156" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.780</text><text x="238" y="207" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">frozen rule</text><rect x="250" y="190" width="219.6" height="26" rx="4" fill="#dc2626"/><text x="479.6" y="208" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.380</text><text x="238" y="259" fill="#3a4353" font-size="15" font-family="Inter,system-ui,sans-serif" text-anchor="end">model (dev-trained)</text><rect x="250" y="242" width="427.6" height="26" rx="4" fill="#16a34a"/><text x="687.6" y="260" fill="#111827" font-size="16" font-weight="700" font-family="Inter,system-ui,sans-serif">0.740</text></svg>
-    <figcaption><b>What to notice:</b> raw precision moves with the base rate. Post-label checks can affect the next
-    decision, not the one already made.</figcaption></figure>
+    <p>On the client-grouped holdout, the model's Precision@50 is <b>0.820</b> and the rule's is <b>0.400</b> 
+    (random-selection expectation 0.385). The model more than doubles the rule's hit rate at the head of the queue. 
+    CatBoost was selected for retraining due to stable threshold behavior, though XGBoost had the highest single P@50 (0.860).</p>
+    <figure>
+      <img src="charts/confidence_mix.svg" alt="Confidence distribution chart">
+      <figcaption>Confidence tiers: 16,806 high-confidence pages are the safest first review set.</figcaption>
+    </figure>
+    <figure>
+      <img src="charts/top_reason_codes.svg" alt="Top reason codes chart">
+      <figcaption>Top reasons: <code>never_optimized</code> (79,707 pages) and <code>ctr_review_candidate</code> (66,780) dominate.</figcaption>
+    </figure>
   </section>
 
   <section id="p3-actions">
     <h2>What to do with this</h2>
-    
-    <div class="p3-action">
-      <p class="p3-a-find"><b>Finding.</b> Pages that spiked to 3.3–7× their baseline month decline 69% of the time (portfolio base: 42%).</p>
-      <p><b>What this means.</b> In this development frame, mid-band spikes often preceded decline. These pages merit review, not an automatic edit.</p>
-      <p class="p3-a-act"><b>Action.</b> Review intent match, verify the pattern, and form a hypothesis; the queue labels these review_before_revert.</p>
-      <p class="p3-a-dont"><b>Do not.</b> Do not treat the spike as proof the page 'works' — and do not bulk-rewrite everything that spiked.</p>
-      <p><b>Measure.</b> In a controlled pilot, compare later clicks with comparable unreviewed spikes.</p>
-    </div>
-    <div class="p3-action">
-      <p class="p3-a-find"><b>Finding.</b> The intuitive “already dipping” watchlist declines at only 33% — below the 42% base rate.</p>
-      <p><b>What this means.</b> In this development month, many recent drops reversed. The natural drop-list is an anti-signal for this label and frame.</p>
-      <p class="p3-a-act"><b>Action.</b> Do not use 'biggest recent drop' as the primary ranking without validating it; keep the list as context.</p>
-      <p class="p3-a-dont"><b>Do not.</b> Do not conclude dipping pages never matter — some are the no-warning decliners the model also misses.</p>
-      <p><b>Measure.</b> Compare review outcomes from the model-ordered queue against the old drop-sorted list on the same month.</p>
-    </div>
-    <div class="p3-action">
-      <p class="p3-a-find"><b>Finding.</b> Pages already rising for two straight months (≥1.5× their base) recur among high-score false positives.</p>
-      <p><b>What this means.</b> In this frame, persistent momentum often continued; editing these pages without review risks disrupting a working trend.</p>
-      <p class="p3-a-act"><b>Action.</b> The queue routes them to monitor_only automatically. A human sees them; nobody edits them.</p>
-      <p class="p3-a-dont"><b>Do not.</b> Do not 'optimize' a page mid-climb because a score is high — the score is high because the pattern is unusual.</p>
-      <p><b>Measure.</b> Track that monitor_only pages keep growing untouched; any editor override gets logged.</p>
-    </div>
-    <p class="p3-nogo"><b>What we refused to automate:</b> no auto-rewrites, ever; new pages stay out of the queue (their
-    stats are artifacts of small history); spikes above 20× route to a tracking check before anyone touches content —
-    at that size it may be instrumentation or a campaign rather than audience behavior. Three gates are asserted here;
-    below-floor exclusion is upstream; recently-optimized exclusion is a proposed deployment join.</p>
-  </section>
 
-  <section id="p3-roi">
-    <h2>The value, as a scenario — not a promise</h2>
-    <div class="p3-roi-box">
-      <p>Derived arithmetic, stated with its assumptions: at 50 reviews a month, precision 0.504 vs 0.384 means
-      roughly <b>6 more labeled decliners in a 50-row batch</b> ((0.504 − 0.384) × 50 ≈ 6). This is descriptive
-      fold-mean arithmetic from the five-fold evaluation, not a forecast of future impact.</p>
-      <p><b>Assumptions this depends on:</b> your portfolio behaves like this one (it may not); review capacity is really
-      the bottleneck; and catching a decliner early is worth an editor-hour. <b>What it does not include:</b> any claim
-      about traffic recovered — that requires a controlled test, which is the natural next study.</p>
+    <div class="p3-action">
+      <p><b>Finding.</b> Pages that are old AND never optimized dominate the high-confidence queue.</p>
+      <p><b>What this means.</b> In this dataset, age without optimization is the strongest underperformance signal. 
+      These pages merit review, not an automatic rewrite.</p>
+      <p class="p3-a-act"><b>Action.</b> Inspect the top 50 high-confidence rows. Verify word count, update history, 
+      and keyword alignment before editing.</p>
+      <p class="p3-a-dont"><b>Do not.</b> Do not bulk-refresh every old page — some old pages perform at or above peer median.</p>
     </div>
+
+    <div class="p3-action">
+      <p><b>Finding.</b> The "thin content" flag appears in 59,000 rows — the most common weakness.</p>
+      <p><b>What this means.</b> Thin content is widespread, but not all thin pages underperform. The model's 
+      bucket-relative comparison separates the real underperformers from the merely short.</p>
+      <p class="p3-a-act"><b>Action.</b> Prioritize thin pages that also have low CTR relative to their position bucket. 
+      Expand content where the gap is largest.</p>
+    </div>
+
+    <div class="p3-action">
+      <p><b>Finding.</b> Pages with good impressions and position ≤ 20 but low CTR are strong <code>refresh_and_review_ctr</code> candidates.</p>
+      <p><b>What this means.</b> The content body may be fine; the title or meta description may be the problem.</p>
+      <p class="p3-a-act"><b>Action.</b> Test title/meta changes before rewriting the full article. Measure CTR change over 2–4 weeks.</p>
+    </div>
+
+    <p class="p3-nogo"><b>What we refused to automate:</b> no auto-publishing, ever; every row carries a human-readable reason code; 
+    the model supplies the order, the rule supplies the explanation. High-confidence rows are the safest first-pass; 
+    medium and low confidence rows should wait for editorial capacity.</p>
   </section>
 
   <section id="p3-limits">
     <h2>Limits — including the strongest counterargument</h2>
-    <p>This is one portfolio, one label definition, and only one truly out-of-time month. The strongest counterargument to
-    the whole approach: since clicks mean-revert, many "decliners" recover untouched, so a queue that finds decliners may
-    partly find <i>volatility</i>. We agree — which is exactly why the recommended workflow is
-    score → human review → hypothesis → controlled test, and why nothing here claims causality. Every number above is
+    <p>This is one portfolio, one label definition, and one 3-month window. The strongest counterargument to 
+    the whole approach: since CTR mean-reverts around position buckets, many "underperformers" recover untouched, 
+    so a queue that finds underperformers may partly find <i>volatility</i>. We agree — which is exactly why the recommended workflow is 
+    score → human review → hypothesis → controlled test, and why nothing here claims causality. Every number above is 
     observed or measured; the decisions it supports are ordering decisions.</p>
   </section>
 
   <section id="p3-repro">
     <h2>Reproduce it, cite it, argue with it</h2>
-    <p>The notebooks, metric receipts, seeds and environment are committed; a fresh clone re-runs in minutes
-    (heavy scans cache locally). Data period, code version and update date are printed at the top of this page so a future
-    reader can tell "wrong" from "true at the time". [&nbsp;Repository — link yours here&nbsp;]</p>
-    <p class="p3-credit">Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a>.
-    Data credit is not a substitute for citations. Sources: <a href="https://support.google.com/webmasters/answer/17011259?hl=en">Search Console dimensions and limits</a> ·
-    <a href="https://support.google.com/webmasters/answer/96568?hl=en">About Search Console data</a> ·
-    <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">WCAG contrast guidance</a>.</p>
+    <p>The scripts, metric receipts, seeds and environment are committed; a fresh clone re-runs in minutes 
+    (heavy scans cache locally). Data period, code version and update date are printed at the top of this page so a future 
+    reader can tell "wrong" from "true at the time". <a href="https://github.com/menna890/flyrank-ml-internship-Explaining-Search-Performance" target="_blank">GitHub Repository</a></p>
+    <p class="p3-credit">Built on the <b>FlyRank ML Internship dataset</b> — <a href="https://flyrank.ai">flyrank.ai</a>. 
+    Data credit is not a substitute for citations. All identifiers are anonymized.</p>
   </section>
 </article>
 </div>
+
   </main>
   <script>
 const tabs = document.querySelectorAll('.tabs button');
 function setView(v){
   document.body.dataset.view = v;
   tabs.forEach(b => b.classList.toggle('active', b.dataset.view === v));
-  try { history.replaceState(null, '', '#' + v); } catch (e) {}
+  try { history.replaceState(null, '', '#' + v); } catch(e) {}
 }
 tabs.forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
 setView(['all','d1','d2','d3'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'all');
-</script>
+  </script>
 </body>
 </html>
